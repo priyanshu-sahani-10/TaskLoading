@@ -4,12 +4,16 @@ import viteLogo from '/vite.svg'
 import './App.css'
 import { Button } from './components/ui/button'
 import { Tabs } from './components/ui/tabs'
+import Login from './pages/Login.jsx'
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <Button>Priyanshu Sahani</Button>
+    <>
+    <Login />
+    </>
+    // <div></div>
   )
 }
 

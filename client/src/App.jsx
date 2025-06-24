@@ -7,13 +7,11 @@ import { Tabs } from './components/ui/tabs'
 import Login from './pages/Login.jsx'
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
     <>
     <Login />
     </>
-    // <div></div>
   )
 }
 

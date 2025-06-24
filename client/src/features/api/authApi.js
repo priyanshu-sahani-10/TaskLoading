@@ -1,15 +1,16 @@
 import {createApi,fetchBaseQuery} from '@reduxjs/toolkit/query/react';
+import { userLoggedIn, userLoggedOut } from "../authSlice.js";
 
 const USER_API="http://localhost:5000/api/v1/user/";
 
 export const authApi = createApi({
-    reducerPath: 'authApi',
-    baseQuery: fetchBaseQuery({ 
+    reducerPath:"authApi",
+    baseQuery:fetchBaseQuery({
         baseUrl:USER_API,
-        credentials:'include'        
-     }),
+        credentials:'include'
+    }),
+    endpoints: (builder) => ({
 
-     endpoints:(builder) => ({
 
         registerUser: builder.mutation({
             query: (inputData) => ({
@@ -20,8 +21,8 @@ export const authApi = createApi({
         }),
 
 
-        loginUser:builder.mutation({
-            query:(inputData) => ({
+        loginUser: builder.mutation({
+            query: (inputData) => ({
                 url:"login",
                 method:"POST",
                 body:inputData
@@ -36,14 +37,10 @@ export const authApi = createApi({
             }
         })
 
-
-
+        
     })
-
 });
-
-
-export const { 
+export const {
     useRegisterUserMutation,
     useLoginUserMutation
 } = authApi;

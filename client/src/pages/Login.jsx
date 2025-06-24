@@ -19,6 +19,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
+import { useLoginUserMutation, useRegisterUserMutation } from "@/features/api/authApi"
 
 export function TabsDemo() {
 
@@ -28,10 +29,38 @@ export function TabsDemo() {
         password: ""
     });
 
+
     const[loginInput, setLoginInput]= useState({
         email:"",
         password:""
     });
+
+
+
+    const [
+    registerUser,
+    {
+      data: registerData,
+      error: registerError,
+      isLoading: registerIsLoading,
+      isSuccess: registerIsSuccess,
+    },
+  ] = useRegisterUserMutation();
+
+
+
+  const [
+    loginUser,
+    {
+      data: loginData,
+      error: loginError,
+      isLoading: loginIsLoading,
+      isSuccess: loginIsSuccess,
+    },
+  ] = useLoginUserMutation();
+
+
+
 
     const changeInputHandler =(e,type)=>{
         const {name,value}=e.target
@@ -44,11 +73,14 @@ export function TabsDemo() {
     };
 
 
+
      const handleRegistration = async (type) => {
         const inputData = type === "signup" ? signupInput : loginInput;
         const action = type === "signup" ? registerUser : loginUser;
         await action(inputData);
     };
+
+
 
     
 
@@ -74,7 +106,7 @@ export function TabsDemo() {
             <CardContent className="space-y-">
 
               <div className="space-y-1">
-                <Label htmlFor="tabs-demo-name">Name</Label>
+                <Label htmlFor="name">Name</Label>
                 <Input
                   type="text"
                   id="name"
@@ -87,7 +119,7 @@ export function TabsDemo() {
               </div>
 
               <div className="space-y-1">
-                <Label htmlFor="tabs-demo-username">Email</Label>
+                <Label htmlFor="email">Email</Label>
                 <Input 
                   type="text"
                   id="email"
@@ -100,7 +132,7 @@ export function TabsDemo() {
               </div>
 
               <div className="space-y-1">
-                <Label htmlFor="tabs-demo-username">Password</Label>
+                <Label htmlFor="password">Password</Label>
                 <Input 
                   type="password"
                   id="password"
@@ -146,7 +178,7 @@ export function TabsDemo() {
             <CardContent className="space-y-2">
 
               <div className="space-y-1">
-                <Label htmlFor="tabs-demo-current">Email</Label>
+                <Label htmlFor="email">Email</Label>
                 <Input
                   type="email"
                   id="email"
@@ -159,7 +191,7 @@ export function TabsDemo() {
               </div>
 
               <div className="space-y-1">
-                <Label htmlFor="tabs-demo-new">Password</Label>
+                <Label htmlFor="password">Password</Label>
                 <Input
                   type="password"
                   id="password"

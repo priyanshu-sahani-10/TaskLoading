@@ -21,6 +21,11 @@ import {
 } from "@/components/ui/tabs"
 import { useLoginUserMutation, useRegisterUserMutation } from "@/features/api/authApi"
 
+import {useNavigate} from "react-router-dom"
+import { toast } from "sonner"
+
+
+
 export function TabsDemo() {
 
     const[signupInput, setSignupInput] = useState({
@@ -81,6 +86,33 @@ export function TabsDemo() {
     };
 
 
+    // const navigate = useNavigate();
+
+
+      useEffect(() => {
+        if(registerIsSuccess && registerData){
+          toast.success(registerData.message || "Signup successful.")
+          // navigate("/");
+        }
+        if (registerError) {
+          toast.error(registerError?.data?.message || registerError?.message || "Signup Failed");
+        }
+        if(loginIsSuccess && loginData){
+          toast.success(loginData.message || "Login successful.");
+          // navigate("/");
+        }
+        if (loginError) {
+          toast.error(loginError?.data?.message || loginError?.message || "Login Failed");
+        }
+
+      }, [
+        loginIsLoading,
+        registerIsLoading,
+        loginData,
+        registerData,
+        loginError,
+        registerError,
+      ]);
 
     
 

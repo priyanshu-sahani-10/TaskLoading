@@ -117,7 +117,7 @@ export function TabsDemo() {
     
 
   return (
-    <div className="flex w-full max-w-sm flex-col gap-6">
+    <div className="mb-28 flex w-full max-w-sm flex-col gap-6">
       <Tabs defaultValue="Login" className="w-[400px]">
 
         <TabsList className="grid w-full grid-cols-2">

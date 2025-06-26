@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import connectDB from './config/db.js';
 import userRoutes from './routes/user.route.js';
-
+import createIssue from './routes/issue.route.js';
 dotenv.config({});
 connectDB();
 
@@ -19,4 +19,5 @@ app.use(cors({
 }));
 
 app.use('/api/v1/user', userRoutes);
+app.use('/api/v1', createIssue);
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

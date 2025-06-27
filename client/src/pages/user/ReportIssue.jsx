@@ -63,7 +63,7 @@ const ReportIssue = () => {
     );
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const formDataToSend = new FormData();
     formDataToSend.append("title", formData.title);
@@ -73,14 +73,18 @@ const ReportIssue = () => {
     if (formData.image) {
       formDataToSend.append("image", formData.image);
     }
-    createUserIssue(formDataToSend).unwrap();
-    // const result = formDataToSend.json();
-    // console.log("Form submitted with data:", result);
+
+      try {
+         const result = await createUserIssue(formDataToSend).unwrap();        
+      } catch (error) {
+        console.error("Error creating issue:", error);
+        return;        
+      }
   };
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-10">
-      <h1 className="text-3xl font-bold mb-8 text-blue-600">
+    <div className="min-h-screen max-w-3xl mx-auto px-4 py-10">
+      <h1 className="text-3xl font-bold mb-8 text-gray-950 dark:text-blue-700">
         Report a Civic Issue
       </h1>
 
@@ -125,7 +129,7 @@ const ReportIssue = () => {
               <SelectItem value="Road">Road</SelectItem>
               <SelectItem value="Garbage">Garbage</SelectItem>
               <SelectItem value="Streetlight">Streetlight</SelectItem>
-              <SelectItem value="Water">Water</SelectItem>
+              <SelectItem value="Sewer">Sewer</SelectItem>
               <SelectItem value="Other">Other</SelectItem>
             </SelectContent>
           </Select>
@@ -179,7 +183,7 @@ const ReportIssue = () => {
           />
         </div>
 
-        <Button type="submit" className="w-full">
+        <Button type="submit" className="mx-auto justify-between">
           Submit Issue
         </Button>
       </form>

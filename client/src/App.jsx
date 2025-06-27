@@ -5,6 +5,7 @@ import Login from "./pages/Login.jsx";
 import Navbar from "./components/Navbar.jsx";
 import Home from "./pages/Home";
 import MainLayout from "./pages/MainLayout.jsx";
+import ReportIssue from "./pages/user/ReportIssue.jsx";
 
 const appRouter = createBrowserRouter([
 
@@ -24,13 +25,13 @@ const appRouter = createBrowserRouter([
       },
 
       {
-        path: "login",
+        path: "reportIssue",
         element: (
           <>
-            <Login />
+            <ReportIssue />
           </>
         ),
-      }
+      },
 
 
 

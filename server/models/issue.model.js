@@ -15,7 +15,7 @@ const issueSchema = new mongoose.Schema(
 
     category: {
       type: String,
-      enum: ["Road", "Garbage", "Streetlight", "Water", "Building", "Other"],
+      enum: ["Road", "Garbage", "Streetlight", "Sewer", "Building", "Other"],
       required: true,
     },
 
@@ -38,7 +38,7 @@ const issueSchema = new mongoose.Schema(
     reportedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+      required: false,
     },
   },
   { timestamps: true }

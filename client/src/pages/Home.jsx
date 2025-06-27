@@ -1,8 +1,21 @@
 import { Button } from "@/components/ui/button";
 import React from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const Home = () => {
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const navigate = useNavigate();
+
+  const handleGetStarted = () => {
+    if (isAuthenticated) {
+      navigate("/reportIssue");
+    } else {
+      navigate("/login");
+    }
+  };
+
   return (
     <div className=" min-h-screen flex items-center justify-center px-6 bg-white dark:bg-gray-900">
       <div className="max-w-7xl w-full flex flex-col md:flex-row items-center gap-32 py-10 border-t-2 border-gray-300">
@@ -38,7 +51,7 @@ const Home = () => {
           </p>
 
           {/* CTA Button */}
-          <Link to="/login">
+          <Link onClick={handleGetStarted}>
             <Button size="lg" className="mt-4">
               Get Started
             </Button>

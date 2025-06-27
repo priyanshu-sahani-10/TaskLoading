@@ -14,7 +14,6 @@ const MainLayout = () => {
         </div>
         <Testimonial/>
         <Footer/>
-        <ReportIssue/>
     </div>
   )
 }

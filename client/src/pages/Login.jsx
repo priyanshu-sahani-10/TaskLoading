@@ -23,6 +23,8 @@ import { useLoginUserMutation, useRegisterUserMutation } from "@/features/api/au
 
 import {useNavigate} from "react-router-dom"
 import { toast } from "sonner"
+import { useDispatch } from "react-redux";
+import { userLoggedIn } from "@/features/authSlice"// adjust the path as needed
 
 
 
@@ -86,20 +88,22 @@ export function TabsDemo() {
     };
 
 
-    // const navigate = useNavigate();
-
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
 
       useEffect(() => {
         if(registerIsSuccess && registerData){
           toast.success(registerData.message || "Signup successful.")
-          // navigate("/");
+          dispatch(userLoggedIn({user:registerData.user}));
+          navigate("/");
         }
         if (registerError) {
           toast.error(registerError?.data?.message || registerError?.message || "Signup Failed");
         }
         if(loginIsSuccess && loginData){
           toast.success(loginData.message || "Login successful.");
-          // navigate("/");
+          dispatch(userLoggedIn({user:loginData.user}));
+          navigate("/");
         }
         if (loginError) {
           toast.error(loginError?.data?.message || loginError?.message || "Login Failed");

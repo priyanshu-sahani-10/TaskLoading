@@ -1,14 +1,27 @@
+import { type } from "os";
 import Issue from "../models/issue.model.js";
+import cloudinary from "../utils/cloudinary.js";
+
 
 export const createIssue = async (req, res) => {
   try {
-    const { title, description, category, location, imageUrl } = req.body;
+    const { title, description, category, location } = req.body;
 
-    if (!title || !description || !category || !location ||!image) {
-      return res.status(400).json({
-        success: false,
-        message: "All required fields must be filled.",
+    if (!title || !description || !category || !location) {
+      return res
+        .status(400)
+        .json({ success: false, message: "All fields are required" });
+    }
+
+    let imageUrl = "";
+
+    // Check for file upload
+    if (req.file) {
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        resource_type: "auto",
+        folder: "civic-issues",
       });
+      imageUrl = result.secure_url;
     }
 
     const newIssue = await Issue.create({
@@ -16,20 +29,19 @@ export const createIssue = async (req, res) => {
       description,
       category,
       location,
-      imageUrl,
-      reportedBy: req.user._id, // assuming middleware adds user to req
+      image: imageUrl,
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
-      message: "Issue reported successfully!",
-      issue: newIssue,
+      message: "Issue reported successfully",
+      data: newIssue,
     });
   } catch (error) {
-    console.error("Error creating issue:", error);
-    res.status(500).json({
+    console.error("Issue creation failed:", error);
+    return res.status(500).json({
       success: false,
-      message: "Something went wrong. Could not report issue.",
+      message: "Server error",
     });
   }
 };

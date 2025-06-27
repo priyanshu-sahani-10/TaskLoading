@@ -1,19 +1,19 @@
 // features/api/issueApi.js
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-const BASE_URL = "http://localhost:5000/api/v1/";
+const ISSUE_API="http://localhost:5000/api/v1/user";
 
 
 export const issueApi = createApi({
   reducerPath: "issueApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: BASE_URL,
+    baseUrl: ISSUE_API,
     credentials: "include", // for cookies
   }),
   endpoints: (builder) => ({
-    createIssue: builder.mutation({
+    createUserIssue: builder.mutation({
       query: (issueData) => ({
-        url: "issues",
+        url: "issue",
         method: "POST",
         body: issueData,
       }),
@@ -21,5 +21,4 @@ export const issueApi = createApi({
   }),
 });
 
-export const { useCreateIssueMutation } = issueApi;
-export default issueApi.reducer;
+export const { useCreateUserIssueMutation } = issueApi;

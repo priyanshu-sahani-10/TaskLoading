@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { useCreateUserIssueMutation } from "@/features/api/issueApi";
 import {
   Select,
   SelectContent,
@@ -19,6 +20,16 @@ const ReportIssue = () => {
     location: "", // now holds either typed or auto location
     image: null,
   });
+
+  const [
+    createUserIssue,
+    {
+      data: issueData,
+      error: issueError,
+      isLoading: issueIsLoading,
+      isSuccess: issueIsSuccess,
+    },
+  ] = useCreateUserIssueMutation();
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -54,8 +65,17 @@ const ReportIssue = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Submitted:", formData);
-    // TODO: Add backend API integration
+    const formDataToSend = new FormData();
+    formDataToSend.append("title", formData.title);
+    formDataToSend.append("description", formData.description);
+    formDataToSend.append("category", formData.category);
+    formDataToSend.append("location", formData.location);
+    if (formData.image) {
+      formDataToSend.append("image", formData.image);
+    }
+    createUserIssue(formDataToSend).unwrap();
+    // const result = formDataToSend.json();
+    // console.log("Form submitted with data:", result);
   };
 
   return (
@@ -115,7 +135,11 @@ const ReportIssue = () => {
         <div className="space-y-1">
           <Label>Location</Label>
           <div className="flex gap-4">
-            <Button type="button" variant="outline" onClick={handleUseCurrentLocation}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleUseCurrentLocation}
+            >
               Use Current Location
             </Button>
             <span className="text-sm self-center text-gray-500">or</span>
@@ -130,7 +154,11 @@ const ReportIssue = () => {
           </div>
           {formData.location && (
             <a
-              href={formData.location.startsWith("http") ? formData.location : `https://maps.google.com/?q=${formData.location}`}
+              href={
+                formData.location.startsWith("http")
+                  ? formData.location
+                  : `https://maps.google.com/?q=${formData.location}`
+              }
               target="_blank"
               rel="noreferrer"
               className="text-blue-600 text-sm underline mt-1 inline-block"

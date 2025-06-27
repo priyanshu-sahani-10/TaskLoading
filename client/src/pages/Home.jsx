@@ -6,17 +6,17 @@ const Home = () => {
   return (
     <div className=" min-h-screen flex items-center justify-center px-6 bg-white dark:bg-gray-900">
       <div className="max-w-7xl w-full flex flex-col md:flex-row items-center gap-32 py-10 border-t-2 border-gray-300">
-        
         {/* Left - Vertical Images */}
         <div className="flex  gap-6">
           <img
-            className="w-52 h-52 rounded-full border border-gray-400 object-cover shadow-md"
-            src="/Garbage.jpeg"
-            alt="Garbage"
-          />
-          <img
-            className="w-52 h-52 rounded-full border border-gray-400 object-cover shadow-md"
+            className="w-56 h-56 rounded-full border border-gray-400 object-cover shadow-md transition-transform duration-300 ease-in-out hover:scale-110"
             src="/Pathole.jpeg"
+            alt="Pothole"
+          />
+
+          <img
+            className="w-56 h-56 rounded-full border border-gray-400 object-cover shadow-md transition-transform duration-300 ease-in-out hover:scale-110"
+            src="/Building.jpeg"
             alt="Pothole"
           />
         </div>
@@ -30,7 +30,11 @@ const Home = () => {
 
           {/* Description */}
           <p className="text-gray-700 dark:text-gray-300 text-lg leading-relaxed">
-            Welcome to <span className="font-semibold text-blue-600">Taskloading</span> — a community-powered platform to report and resolve civic issues. Whether it’s garbage, potholes, or broken infrastructure, your voice helps drive change.
+            Welcome to{" "}
+            <span className="font-semibold text-blue-600">Taskloading</span> — a
+            community-powered platform to report and resolve civic issues.
+            Whether it’s garbage, potholes, or broken infrastructure, your voice
+            helps drive change.
           </p>
 
           {/* CTA Button */}

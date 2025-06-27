@@ -2,7 +2,7 @@ import express from 'express';
 import User from '../models/user.model.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { generateToken } from '../utils.js/generateToken.js';
+import { generateToken } from '../utils/generateToken.js';
 
 
 

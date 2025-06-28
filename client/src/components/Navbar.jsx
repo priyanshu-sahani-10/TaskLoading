@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -16,27 +16,59 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import DarkMode from "@/DarkMode";
+import { useSelector } from "react-redux";
+import { useLogoutUserMutation } from "@/features/api/authApi";
+import { use, useEffect } from "react";
+import { toast } from "sonner";
 
 export default function Navbar() {
-  const user = true;
+  const { user } = useSelector((store) => store.auth);
+
+  const [logoutUser, { data, isSuccess }] = useLogoutUserMutation();
+  const navigate = useNavigate();
+  const logoutHandler = async () => {
+  await logoutUser();
+};
+
+
+useEffect(() => {
+  if (isSuccess) {
+    navigate("/");
+    toast.success("User Logout successful");
+  }
+}, [isSuccess, navigate]);
+
+
+
+
 
   return (
     <div className="h-16 dark:bg-[#020817] bg-white border-b dark:border-b-gray-800 border-b-gray-200 fixed top-0 left-0 right-0  z-10">
-      
       <div className="max-w-7xl mx-auto hidden md:flex justify-between items-center  h-full">
-        
         <div className="flex items-center gap-8">
+          <Link to="/">
             <h1 className=" text-blue-500 text-3xl">Taskloading</h1>
-          <div className=" flex space-x-4">
-            <Link to="/">
-              <h3 className="hidden md:block font-bold ">Home</h3>
-            </Link>
-            <Link to="/login">
-              <h3 className="hidden md:block font-bold ">login</h3>
-            </Link>
-          </div>
+          </Link>
+
+          {user ? (
+            <div className="flex items-center gap-4">
+              <span>Welcome, {user?.name}</span>
+              <Link to="/reportIssue">
+                <Button>Report Issue</Button>
+              </Link>
+            </div>
+          ) : (
+            <div className=" flex space-x-4">
+              <Link to="/">
+                <h3 className="hidden md:block font-bold ">Home</h3>
+              </Link>
+              <Link to="/login">
+                <h3 className="hidden md:block font-bold ">login</h3>
+              </Link>
+            </div>
+          )}
         </div>
-        
+
         <div className="flex items-center gap-8">
           {user ? (
             <DropdownMenu>
@@ -61,7 +93,9 @@ export default function Navbar() {
                 </DropdownMenuGroup>
 
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Log out</DropdownMenuItem>
+                <button onClick={logoutHandler}>
+                  <DropdownMenuItem>Log out</DropdownMenuItem>
+                </button>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
@@ -71,8 +105,7 @@ export default function Navbar() {
             </div>
           )}
 
-            <DarkMode />
-        
+          <DarkMode />
         </div>
       </div>
     </div>

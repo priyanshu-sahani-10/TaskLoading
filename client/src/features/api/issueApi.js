@@ -1,7 +1,7 @@
 // features/api/issueApi.js
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-const ISSUE_API="http://localhost:5000/api/v1/user";
+const ISSUE_API="http://localhost:5000/api/v1";
 
 
 export const issueApi = createApi({

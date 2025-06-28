@@ -35,12 +35,45 @@ export const authApi = createApi({
                     console.log(error);
                 }
             }
-        })
+        }),
+
+
+          loadUser: builder.query({
+            query: () => ({
+                url:"profile",
+                method:"GET"
+            }),
+            async onQueryStarted(_, {queryFulfilled, dispatch}) {
+                try {
+                    const result = await queryFulfilled;
+                    dispatch(userLoggedIn({user:result.data.user}));
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+        }),
+
+
+        logoutUser: builder.mutation({
+            query: () => ({
+                url:"logout",
+                method:"GET"
+            }),
+            async onQueryStarted(_, {queryFulfilled, dispatch}) {
+                try { 
+                    dispatch(userLoggedOut());
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+        }),
 
         
     })
 });
 export const {
     useRegisterUserMutation,
-    useLoginUserMutation
+    useLoginUserMutation,
+    useLoadUserQuery,
+    useLogoutUserMutation,
 } = authApi;

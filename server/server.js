@@ -24,6 +24,6 @@ app.use(cors({
 
 // Route registration
 app.use("/api/v1/user", userRoutes);
-app.use('/api/v1/', issueRoutes); 
+app.use('/api/v1/issue', issueRoutes); 
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -5,6 +5,7 @@ import Footer from './Footer.jsx'
 import Testimonial from './Testimonial.jsx'
 import ReportIssue from './user/ReportIssue.jsx'
 import { useLoadUserQuery } from '@/features/api/authApi.js'
+import CommunityBoard from './CommunityIssues.jsx'
 
 const MainLayout = () => {
   useLoadUserQuery();
@@ -16,6 +17,7 @@ const MainLayout = () => {
         </div>
         <Testimonial/>
         <Footer/>
+        <CommunityBoard/>
     </div>
   )
 }

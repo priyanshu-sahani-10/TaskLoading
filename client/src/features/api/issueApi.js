@@ -1,8 +1,6 @@
-// features/api/issueApi.js
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-const ISSUE_API="http://localhost:5000/api/v1";
-
+const ISSUE_API = "http://localhost:5000/api/v1/issue";
 
 export const issueApi = createApi({
   reducerPath: "issueApi",
@@ -10,15 +8,39 @@ export const issueApi = createApi({
     baseUrl: ISSUE_API,
     credentials: "include", // for cookies
   }),
+  
   endpoints: (builder) => ({
     createUserIssue: builder.mutation({
       query: (issueData) => ({
-        url: "issue",
+        url: "postIssue",
         method: "POST",
         body: issueData,
       }),
     }),
+
+    getAllIssue: builder.query({
+      query: () => ({
+        url: "getIssue",
+        method: "GET",
+        credentials: "include",
+      }),
+    }),
+
+    toggleUpvote: builder.mutation({
+      query: (issueId) => ({
+        url: `upvoteIssue/${issueId}`,
+        method: "PUT",
+        body: { issueId },
+        credentials: "include",
+      }),
+    }),
+
+    
   }),
 });
 
-export const { useCreateUserIssueMutation } = issueApi;
+export const { 
+  useCreateUserIssueMutation,
+  useGetAllIssueQuery,
+  useToggleUpvoteMutation,
+} = issueApi;

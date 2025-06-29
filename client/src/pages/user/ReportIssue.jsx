@@ -4,6 +4,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useCreateUserIssueMutation } from "@/features/api/issueApi";
+import { useNavigate } from "react-router-dom";
 import {
   Select,
   SelectContent,
@@ -63,6 +64,7 @@ const ReportIssue = () => {
     );
   };
 
+  const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formDataToSend = new FormData();
@@ -75,7 +77,11 @@ const ReportIssue = () => {
     }
 
       try {
-         const result = await createUserIssue(formDataToSend).unwrap();        
+         const result = await createUserIssue(formDataToSend).unwrap();
+         if (result.success) {
+           alert("Issue reported successfully!");
+           navigate("/");
+         }        
       } catch (error) {
         console.error("Error creating issue:", error);
         return;        

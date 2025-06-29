@@ -1,7 +1,6 @@
 import { type } from "os";
-import Issue from "../models/issue.model.js";
+import Issue  from "../models/issue.model.js";
 import cloudinary from "../utils/cloudinary.js";
-
 
 export const createIssue = async (req, res) => {
   try {
@@ -20,14 +19,13 @@ export const createIssue = async (req, res) => {
     let imageUrl = "";
 
     if (req.file) {
-  const result = await cloudinary.uploader.upload(req.file.path, {
-    resource_type: "auto",
-    folder: "issues", // optional
-  });
-  console.log("📸 Cloudinary upload result:", result); // Add this line
-  imageUrl = result.secure_url;
-}
-
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        resource_type: "auto",
+        folder: "issues", // optional
+      });
+      console.log("📸 Cloudinary upload result:", result); // Add this line
+      imageUrl = result.secure_url;
+    }
 
     const newIssue = await Issue.create({
       title,
@@ -50,3 +48,69 @@ export const createIssue = async (req, res) => {
     });
   }
 };
+
+export const getAllIssue = async (req, res) => {
+  try {
+    const issues = await Issue.find()
+      .populate("reportedBy", "name ")
+      .sort({ createdAt: -1 });
+
+    if (!issues || issues.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No issues found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Issues fetched successfully",
+      data: issues,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+
+
+
+//// Function to toggle upvote on an issue
+
+export const toggleUpvote = async (req, res) => {
+  try {
+    const userId = req.id;
+    const { issueId } = req.params;
+
+    const issue = await Issue.findById(issueId);
+    if (!issue) {
+      return res.status(404).json({ success: false, message: "Issue not found" });
+    }
+
+    const alreadyVoted = issue.upvotes.includes(userId);
+
+    if (alreadyVoted) {
+      issue.upvotes.pull(userId); // remove vote
+    } else {
+      issue.upvotes.push(userId); // add vote
+    }
+
+    await issue.save();
+
+    return res.status(200).json({
+      success: true,
+      message: alreadyVoted ? "Upvote removed" : "Upvoted successfully",
+      totalVotes: issue.upvotes.length,
+    });
+
+  } catch (error) {
+    console.error("Upvote failed:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error during upvote",
+    });
+  }
+};
+

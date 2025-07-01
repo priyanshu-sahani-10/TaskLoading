@@ -56,15 +56,16 @@ useEffect(() => {
               <Link to="/reportIssue">
                 <Button>Report Issue</Button>
               </Link>
+              <Link to="/communityBoard">
+                <Button>Show All Issues !!!</Button>
+              </Link>
             </div>
           ) : (
             <div className=" flex space-x-4">
               <Link to="/">
-                <h3 className="hidden md:block font-bold ">Home</h3>
+                <Button><h3 className="hidden md:block font-bold ">Home</h3></Button>
               </Link>
-              <Link to="/login">
-                <h3 className="hidden md:block font-bold ">login</h3>
-              </Link>
+
             </div>
           )}
         </div>
@@ -86,10 +87,9 @@ useEffect(() => {
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
 
                 <DropdownMenuGroup>
-                  <DropdownMenuItem>My Issue</DropdownMenuItem>
-                  <DropdownMenuItem>Resolve Issue</DropdownMenuItem>
-                  <DropdownMenuItem>Pending Issue</DropdownMenuItem>
-                  <DropdownMenuItem>All Issue</DropdownMenuItem>
+                  <Link to='/userIssues'><DropdownMenuItem>My Issue</DropdownMenuItem>
+                  </Link>
+                  <Link to='/communityBoard'><DropdownMenuItem>All Issue</DropdownMenuItem></Link>
                 </DropdownMenuGroup>
 
                 <DropdownMenuSeparator />
@@ -100,8 +100,8 @@ useEffect(() => {
             </DropdownMenu>
           ) : (
             <div className="flex space-x-2">
-              <Button variant="outline">SignUp</Button>
-              <Button>Login</Button>
+              <Link to='/login'><Button variant="outline">SignUp</Button>
+              <Button>Login</Button></Link>
             </div>
           )}
 

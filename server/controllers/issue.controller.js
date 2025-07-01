@@ -16,15 +16,14 @@ export const createIssue = async (req, res) => {
       });
     }
 
-    let imageUrl = "";
+    let Url = "";
 
     if (req.file) {
       const result = await cloudinary.uploader.upload(req.file.path, {
         resource_type: "auto",
         folder: "issues", // optional
       });
-      console.log("📸 Cloudinary upload result:", result); // Add this line
-      imageUrl = result.secure_url;
+      Url = result.secure_url;
     }
 
     const newIssue = await Issue.create({
@@ -32,7 +31,8 @@ export const createIssue = async (req, res) => {
       description,
       category,
       location,
-      image: imageUrl,
+      imageUrl: Url,
+      reportedBy: req.id, // Assuming req.id contains the user ID
     });
 
     return res.status(201).json({
@@ -111,6 +111,32 @@ export const toggleUpvote = async (req, res) => {
       success: false,
       message: "Server error during upvote",
     });
+  }
+};
+
+
+
+
+
+
+export const getUserIssues = async (req, res) => {
+  try {
+    const userId = req.id;
+    const { status } = req.query; 
+
+    const filter = { reportedBy: userId };
+    if (status) filter.status = status;
+
+    const issues = await Issue.find(filter).sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      message: "Fetched user issues",
+      data: issues,
+    });
+  } catch (err) {
+    console.error("User issue fetch error", err);
+    res.status(500).json({ success: false, message: "Server Error" });
   }
 };
 

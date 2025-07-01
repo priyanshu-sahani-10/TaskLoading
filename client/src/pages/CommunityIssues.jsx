@@ -29,13 +29,11 @@ const CommunityBoard = () => {
       ? issues
       : issues.filter((issue) => issue.category === selectedCategory);
 
-      if(!filteredIssues || filteredIssues.length === 0) {
-        return 
-      }
- const sortedIssues = [...filteredIssues].sort(
-  (a, b) => (b.upvotes?.length || 0) - (a.upvotes?.length || 0)
-);
+  const isEmpty = !filteredIssues || filteredIssues.length === 0;
 
+  const sortedIssues = [...filteredIssues].sort(
+    (a, b) => (b.upvotes?.length || 0) - (a.upvotes?.length || 0)
+  );
 
   const handleUpvote = async (id) => {
     try {
@@ -53,8 +51,8 @@ const CommunityBoard = () => {
     );
 
   return (
-    <div className="max-w-5xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6 text-blue-600">
+    <div className=" min-h-screen max-w-5xl mx-auto p-6">
+      <h1 className="text-3xl font-bold mb-6 text-gray-900 dark:text-blue-700">
         Community Issues
       </h1>
 
@@ -66,8 +64,8 @@ const CommunityBoard = () => {
             onClick={() => setSelectedCategory(cat)}
             className={`px-4 py-2 rounded-full border ${
               selectedCategory === cat
-                ? "bg-blue-600 text-white"
-                : "bg-gray-100"
+                ? "bg-gray-800 text-white"
+                : "bg-gray-100 dark:text-gray-800"
             }`}
           >
             {cat}
@@ -76,30 +74,50 @@ const CommunityBoard = () => {
       </div>
 
       {/* Issue List */}
-      <div className="grid gap-6">
-        {sortedIssues.map((issue) => (
-          <div key={issue._id} className="p-4 border rounded shadow-sm">
-            <h2 className="text-xl font-semibold">{issue.title}</h2>
-            <p className="text-sm text-gray-600">{issue.description}</p>
-            <p className="text-sm text-blue-500">Category: {issue.category}</p>
-            <p className="text-sm mb-2">Upvotes: {issue.upvotes.length}</p>
-
-            <button
-              onClick={() => handleUpvote(issue._id)}
-              disabled={isVoting}
-              className={`px-3 py-1 text-sm rounded-full border ${
-                issue.upvotes.includes(user?._id)
-                  ? "bg-green-500 text-white"
-                  : "bg-gray-200"
-              }`}
+      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  ">
+        {!isEmpty ? (
+          sortedIssues.map((issue) => (
+            <div
+              key={issue._id}
+              className=" gap-4 p-4 rounded-xl  border border-gray-900 shadow-xl/30    transition-all  hover:scale-105 dark:bg-gray-800"
             >
-              ⬆ {issue.upvotes.length} Upvote
-            </button>
-          </div>
-        ))}
+              <h2 className="text-xl font-semibold">{issue.title}</h2>
 
-        {sortedIssues.length === 0 && (
-          <p className="text-center text-gray-500">
+              {issue.imageUrl && (
+                <img
+                  src={issue.imageUrl}
+                  alt="Issue"
+                  className="w-full h-48 object-cover rounded my-2"
+                />
+              )}
+
+              <p className="text-sm text-gray-600 dark:text-white">
+                {issue.description}
+              </p>
+              <p className="text-sm text-blue-500">
+                Category: {issue.category}
+              </p>
+              <p className="text-sm text-orange-600">
+                Posted on : {new Date(issue.createdAt).toLocaleDateString()}
+              </p>
+
+              <p className="text-sm mb-2">Upvotes: {issue.upvotes.length}</p>
+
+              <button
+                onClick={() => handleUpvote(issue._id)}
+                disabled={isVoting}
+                className={`px-3 py-1 text-sm rounded-full border ${
+                  issue.upvotes.includes(user?._id)
+                    ? "bg-green-500 text-white"
+                    : "bg-gray-200"
+                }`}
+              >
+                ⬆ {issue.upvotes.length} Upvote
+              </button>
+            </div>
+          ))
+        ) : (
+          <p className="text-center text-gray-900 font-bold text-2xl dark:text-blue-700">
             No issues in this category.
           </p>
         )}

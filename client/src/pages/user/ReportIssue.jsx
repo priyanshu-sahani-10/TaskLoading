@@ -136,6 +136,7 @@ const ReportIssue = () => {
               <SelectItem value="Garbage">Garbage</SelectItem>
               <SelectItem value="Streetlight">Streetlight</SelectItem>
               <SelectItem value="Sewer">Sewer</SelectItem>
+              <SelectItem value="Building">Building</SelectItem>
               <SelectItem value="Other">Other</SelectItem>
             </SelectContent>
           </Select>

@@ -1,4 +1,8 @@
-import { BrowserRouter  , createBrowserRouter, RouterProvider} from "react-router-dom";
+import {
+  BrowserRouter,
+  createBrowserRouter,
+  RouterProvider,
+} from "react-router-dom";
 import { ThemeProvider } from "./components/ThemeProvider.jsx";
 
 import Login from "./pages/Login.jsx";
@@ -6,30 +10,29 @@ import Navbar from "./components/Navbar.jsx";
 import Home from "./pages/Home";
 import MainLayout from "./pages/MainLayout.jsx";
 import ReportIssue from "./pages/user/ReportIssue.jsx";
+import CommunityBoard from "./pages/CommunityIssues.jsx";
+import UserIssues from "./pages/user/UserIssues.jsx";
 
 const appRouter = createBrowserRouter([
-
   {
     path: "/",
-    element:<MainLayout/>,
+    element: <MainLayout />,
     children: [
-
-
       {
         path: "/",
         element: (
-        <>
-          <Home />
-        </>
+          <>
+            <Home />
+          </>
         ),
       },
 
       {
         path: "/login",
         element: (
-        <>
-          <Login />
-        </>
+          <>
+            <Login />
+          </>
         ),
       },
 
@@ -42,16 +45,30 @@ const appRouter = createBrowserRouter([
         ),
       },
 
+      {
+        path: "communityBoard",
+        element: (
+          <>
+            <CommunityBoard />
+          </>
+        ),
+      },
+
+      {
+        path: "userIssues",
+        element: (
+          <>
+            <UserIssues />
+          </>
+        ),
+      }
 
 
-      
 
-    ]
-  }
 
+    ],
+  },
 ]);
-
-
 
 function App() {
   return (

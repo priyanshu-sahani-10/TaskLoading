@@ -8,7 +8,7 @@ export const issueApi = createApi({
     baseUrl: ISSUE_API,
     credentials: "include", // for cookies
   }),
-  
+
   endpoints: (builder) => ({
     createUserIssue: builder.mutation({
       query: (issueData) => ({
@@ -35,12 +35,19 @@ export const issueApi = createApi({
       }),
     }),
 
-    
+    getUserIssues: builder.query({
+      query: (status) => ({
+        url: status ? `my-issues?status=${status}` : "my-issues",
+        method: "GET",
+        credentials: "include",
+      }),
+    }),
   }),
 });
 
-export const { 
+export const {
   useCreateUserIssueMutation,
   useGetAllIssueQuery,
   useToggleUpvoteMutation,
+  useGetUserIssuesQuery
 } = issueApi;

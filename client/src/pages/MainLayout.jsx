@@ -17,7 +17,7 @@ const MainLayout = () => {
         </div>
         <Testimonial/>
         <Footer/>
-        <CommunityBoard/>
+
     </div>
   )
 }

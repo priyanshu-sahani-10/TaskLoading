@@ -4,8 +4,6 @@ import cloudinary from "../utils/cloudinary.js";
 
 export const createIssue = async (req, res) => {
   try {
-    console.log("Received data:", req.body);
-    console.log("Received file:", req.file);
 
     const { title, description, category, location } = req.body;
 

@@ -37,11 +37,24 @@ export const issueApi = createApi({
 
     getUserIssues: builder.query({
       query: (status) => ({
-        url: status ? `my-issues?status=${status}` : "my-issues",
+        url:
+          status && status !== "All"
+            ? `my-issues?status=${status}`
+            : "my-issues",
         method: "GET",
         credentials: "include",
       }),
     }),
+
+    updateIssueStatus: builder.mutation({
+      query: ({ issueId, status }) => ({
+        url: `/admin/updateIssues/${issueId}`,
+        method: "PUT",
+        body: { status },
+      }),
+    }),
+
+
   }),
 });
 
@@ -49,5 +62,6 @@ export const {
   useCreateUserIssueMutation,
   useGetAllIssueQuery,
   useToggleUpvoteMutation,
-  useGetUserIssuesQuery
+  useGetUserIssuesQuery,
+  useUpdateIssueStatusMutation,
 } = issueApi;

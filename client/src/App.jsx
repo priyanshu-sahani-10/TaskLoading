@@ -12,6 +12,7 @@ import MainLayout from "./pages/MainLayout.jsx";
 import ReportIssue from "./pages/user/ReportIssue.jsx";
 import CommunityBoard from "./pages/CommunityIssues.jsx";
 import UserIssues from "./pages/user/UserIssues.jsx";
+import AdminIssueManager from "./pages/admin/AdminIssuesManager.jsx";
 
 const appRouter = createBrowserRouter([
   {
@@ -59,6 +60,17 @@ const appRouter = createBrowserRouter([
         element: (
           <>
             <UserIssues />
+          </>
+        ),
+      },
+
+
+
+      {
+        path: "adminIssuesManager",
+        element: (
+          <>
+            <AdminIssueManager/>
           </>
         ),
       }

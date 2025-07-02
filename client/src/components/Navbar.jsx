@@ -68,6 +68,12 @@ useEffect(() => {
 
             </div>
           )}
+
+          {user && user.role === "admin" && (
+            <Link to="/adminIssuesManager">
+              <Button variant="outline">Admin Panel</Button>
+            </Link>
+          )}
         </div>
 
         <div className="flex items-center gap-8">

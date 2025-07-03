@@ -3,7 +3,9 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export const generateToken = (res, user, message) => {
-  const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, {
+  console.log("checking user role", user.role);
+  console.log("checking user id", user._id);
+  const token = jwt.sign({ userId: user._id , role:user.role}, process.env.SECRET_KEY, {
     expiresIn: "1d",
   });
 

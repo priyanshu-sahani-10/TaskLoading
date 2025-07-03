@@ -10,7 +10,7 @@ const features = [
 
 const Testimonial=()=> {
   return (
-    <section className="bg-gray-50 dark:bg-gray-950 py-16 px-6">
+    <section className="bg-gray-200 dark:bg-gray-950 py-16 px-6">
       <div className="max-w-6xl mx-auto text-center space-y-10">
         
         <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">

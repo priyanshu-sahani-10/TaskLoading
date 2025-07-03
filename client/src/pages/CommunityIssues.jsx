@@ -51,8 +51,8 @@ const CommunityBoard = () => {
     );
 
   return (
-    <div className=" min-h-screen max-w-5xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6 text-gray-900 dark:text-blue-700">
+    <div className=" min-h-screen max-w-6xl  mx-auto p-6">
+      <h1 className="text-3xl font-bold mb-6  text-gray-900 dark:text-blue-700">
         Community Issues
       </h1>
 
@@ -79,7 +79,7 @@ const CommunityBoard = () => {
           sortedIssues.map((issue) => (
             <div
               key={issue._id}
-              className=" gap-4 p-4 rounded-xl  border border-gray-900 shadow-xl/30    transition-all  hover:scale-105 dark:bg-gray-800"
+              className=" gap-4 p-4 rounded-xl  border border-gray-900 shadow-lg    transition-all  hover:scale-105 dark:bg-gray-800"
             >
               <h2 className="text-xl font-semibold">{issue.title}</h2>
 
@@ -109,7 +109,7 @@ const CommunityBoard = () => {
                 className={`px-3 py-1 text-sm rounded-full border ${
                   issue.upvotes.includes(user?._id)
                     ? "bg-green-500 text-white"
-                    : "bg-gray-200"
+                    : "bg-gray-200 dark:text-black"
                 }`}
               >
                 ⬆ {issue.upvotes.length} Upvote

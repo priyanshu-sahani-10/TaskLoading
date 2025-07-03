@@ -19,7 +19,7 @@ const Footer=()=>{
         
       </div>
 
-      <p className="text-sm text-gray-500 dark:text-gray-600 mt-6 text-center">
+      <p className=" text-gray-500 dark:text-gray-600 mt-6 text-center text-2xl">
         © {new Date().getFullYear()} TaskLoading. All rights reserved.
       </p>
     </footer>

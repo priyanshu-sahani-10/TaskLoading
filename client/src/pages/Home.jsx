@@ -17,7 +17,7 @@ const Home = () => {
   };
 
   return (
-    <div className=" min-h-screen flex items-center justify-center px-6 bg-white dark:bg-gray-900">
+    <div className=" min-h-screen flex items-center justify-center px-6 bg-gray-100 dark:bg-gray-900">
       <div className="max-w-7xl w-full flex flex-col md:flex-row items-center gap-32 py-10 border-t-2 border-gray-300">
         {/* Left - Vertical Images */}
         <div className="flex  gap-6">

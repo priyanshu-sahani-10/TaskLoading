@@ -2,10 +2,10 @@
 
 import Issue from "../models/issue.model.js";
 
-export const AdminRoute = (req, res) => {
-    console.log("Admin Route Middleware: Checking user role" , req.user.role);
-    
-  if (req.user.role !== "admin") {
+export const AdminRoute = (req, res,next) => {
+  
+  const role = req.user.role;
+  if (role !== "admin") {
     return res.status(403).json({ message: "Admin access only" });
   }
   next();
@@ -13,13 +13,11 @@ export const AdminRoute = (req, res) => {
 
 
 
-// Function to update the status of an issue
 export const updateIssue = async (req, res) => {
   try {
     const { issueId } = req.params;
     const { status } = req.body;
 
-    // Optional: validate status is one of allowed values
     const allowedStatuses = ["Pending", "In Progress", "Resolved"];
     if (!allowedStatuses.includes(status)) {
       return res.status(400).json({ message: "Invalid status value" });

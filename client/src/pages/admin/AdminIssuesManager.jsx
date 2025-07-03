@@ -5,17 +5,21 @@ const statusOptions = ["Pending", "In Progress", "Resolved"];
 
 const AdminIssueManager = () => {
   const { data, isLoading, error } = useGetAllIssueQuery();
-  const [updateStatus] = useUpdateIssueStatusMutation();
+  const [updateIssuesStatus] = useUpdateIssueStatusMutation();
 
   const issues = data?.data || [];
 
-  const handleStatusChange = async (issueId, newStatus) => {
-    try {
-      await updateStatus({ issueId, status: newStatus });
-    } catch (err) {
-      console.error("Status update failed", err);
-    }
-  };
+  const { refetch } = useGetAllIssueQuery(); // grab refetch
+
+const handleStatusChange = async (issueId, newStatus) => {
+  try {
+    await updateIssuesStatus({ issueId, status: newStatus });
+    refetch(); // 🔁 re-fetch all issues
+  } catch (err) {
+    console.error("Status update failed", err);
+  }
+};
+
 
   return (
     <div className="p-6 max-w-5xl mx-auto">
@@ -26,8 +30,8 @@ const AdminIssueManager = () => {
 
       <div className=" grid  md:grid-cols-2 lg:grid-cols-3 gap-6">
         {issues.map((issue) => (
-          <div key={issue._id} className="border p-4  rounded shadow hover:scale-105 transition-transform duration-300">
-            <div className="flex flex-col gap-2">
+          <div key={issue._id} className="border p-4 dark:bg-gray-800 text-white rounded-xl  shadow-2xl hover:scale-105 transition-transform duration-300">
+            <div className="flex flex-col gap-2 ">
                 <h2 className="text-lg font-semibold">{issue.title}</h2>
             {issue.imageUrl && (
               <img
@@ -36,9 +40,9 @@ const AdminIssueManager = () => {
                 className=" size-72 object-cover rounded my-2"
               />
             )}
-            <p className="text-sm text-gray-600">Description: {issue.description}</p>
-            <p className="text-sm text-gray-500">Category: {issue.category}</p>
-            <p className="text-sm text-gray-500">Location: {issue.location}</p>
+            <p className="text-sm text-gray-600 dark:text-white">Description: {issue.description}</p>
+            <p className="text-sm text-gray-500 dark:text-white">Category: {issue.category}</p>
+            <p className="text-sm text-gray-500 dark:text-white">Location: {issue.location}</p>
             <p className="text-sm text-red-500">
               Posted on: {new Date(issue.createdAt).toLocaleDateString()}   
             </p>

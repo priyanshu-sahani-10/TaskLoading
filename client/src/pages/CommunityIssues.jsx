@@ -1,9 +1,10 @@
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
+import { Link, Outlet } from "react-router-dom";
 import {
   useGetAllIssueQuery,
   useToggleUpvoteMutation,
 } from "@/features/api/issueApi";
-import { useSelector } from "react-redux";
 
 const categories = [
   "All",
@@ -38,7 +39,7 @@ const CommunityBoard = () => {
   const handleUpvote = async (id) => {
     try {
       await toggleUpvote(id);
-      refetch(); // refresh after upvote
+      refetch();
     } catch (err) {
       console.error("Failed to upvote:", err);
     }
@@ -51,12 +52,16 @@ const CommunityBoard = () => {
     );
 
   return (
-    <div className=" min-h-screen max-w-6xl  mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6  text-gray-900 dark:text-blue-700">
+    <div className="min-h-screen max-w-6xl mx-auto p-6">
+
+
+        <Outlet />
+
+      <h1 className="text-3xl font-bold mb-6 text-gray-900 dark:text-blue-700">
         Community Issues
       </h1>
 
-      {/* Category Dropdown (optional: replace with Select from shadcn) */}
+      {/* Category Filters */}
       <div className="flex gap-4 mb-6 flex-wrap">
         {categories.map((cat) => (
           <button
@@ -73,48 +78,48 @@ const CommunityBoard = () => {
         ))}
       </div>
 
-      {/* Issue List */}
-      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  ">
+      {/* Issues Grid */}
+      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {!isEmpty ? (
           sortedIssues.map((issue) => (
-            <div
-              key={issue._id}
-              className=" gap-4 p-4 rounded-xl  border border-gray-900 shadow-lg    transition-all  hover:scale-105 dark:bg-gray-800"
-            >
-              <h2 className="text-xl font-semibold">{issue.title}</h2>
-
-              {issue.imageUrl && (
-                <img
-                  src={issue.imageUrl}
-                  alt="Issue"
-                  className="w-full h-48 object-cover rounded my-2"
-                />
-              )}
-
-              <p className="text-sm text-gray-600 dark:text-white">
-                {issue.description}
-              </p>
-              <p className="text-sm text-blue-500">
-                Category: {issue.category}
-              </p>
-              <p className="text-sm text-orange-600">
-                Posted on : {new Date(issue.createdAt).toLocaleDateString()}
-              </p>
-
-              <p className="text-sm mb-2">Upvotes: {issue.upvotes.length}</p>
-
-              <button
-                onClick={() => handleUpvote(issue._id)}
-                disabled={isVoting}
-                className={`px-3 py-1 text-sm rounded-full border ${
-                  issue.upvotes.includes(user?._id)
-                    ? "bg-green-500 text-white"
-                    : "bg-gray-200 dark:text-black"
-                }`}
-              >
-                ⬆ {issue.upvotes.length} Upvote
-              </button>
-            </div>
+            <Link to={`getIssue/${issue._id}`} key={issue._id}>
+              <div className="gap-4 p-4 rounded-xl border border-gray-900 shadow-lg transition-all hover:scale-105 dark:bg-gray-800">
+                <h2 className="text-xl font-semibold">{issue.title}</h2>
+                {issue.imageUrl && (
+                  <img
+                    src={issue.imageUrl}
+                    alt="Issue"
+                    className="w-full h-48 object-cover rounded my-2"
+                  />
+                )}
+                <p className="text-sm text-gray-600 dark:text-white">
+                  {issue.description}
+                </p>
+                <p className="text-sm text-blue-500">
+                  Category: {issue.category}
+                </p>
+                <p className="text-sm text-orange-600">
+                  Posted on: {new Date(issue.createdAt).toLocaleDateString()}
+                </p>
+                <p className="text-sm mb-2">
+                  Upvotes: {issue.upvotes.length}
+                </p>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleUpvote(issue._id);
+                  }}
+                  disabled={isVoting}
+                  className={`px-3 py-1 text-sm rounded-full border ${
+                    issue.upvotes.includes(user?._id)
+                      ? "bg-green-500 text-white"
+                      : "bg-gray-200 dark:text-black"
+                  }`}
+                >
+                  ⬆ {issue.upvotes.length} Upvote
+                </button>
+              </div>
+            </Link>
           ))
         ) : (
           <p className="text-center text-gray-900 font-bold text-2xl dark:text-blue-700">

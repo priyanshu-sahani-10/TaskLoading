@@ -13,6 +13,7 @@ import ReportIssue from "./pages/user/ReportIssue.jsx";
 import CommunityBoard from "./pages/CommunityIssues.jsx";
 import UserIssues from "./pages/user/UserIssues.jsx";
 import AdminIssueManager from "./pages/admin/AdminIssuesManager.jsx";
+import SingleIssue from "./pages/SingleIssue.jsx";
 
 const appRouter = createBrowserRouter([
   {
@@ -47,13 +48,14 @@ const appRouter = createBrowserRouter([
       },
 
       {
-        path: "communityBoard",
-        element: (
-          <>
-            <CommunityBoard />
-          </>
-        ),
-      },
+  path: "/communityBoard",
+  element: <CommunityBoard />,
+},
+{
+  path: "/communityBoard/getIssue/:issueId",
+  element: <SingleIssue />,
+},
+
 
       {
         path: "userIssues",
@@ -64,20 +66,14 @@ const appRouter = createBrowserRouter([
         ),
       },
 
-
-
       {
         path: "adminIssuesManager",
         element: (
           <>
-            <AdminIssueManager/>
+            <AdminIssueManager />
           </>
         ),
-      }
-
-
-
-
+      },
     ],
   },
 ]);

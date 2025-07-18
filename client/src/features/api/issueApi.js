@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-const ISSUE_API = "http://localhost:5000/api/v1/issue";
+const ISSUE_API = "http://localhost:5000/api/v1/issue/";
 
 export const issueApi = createApi({
   reducerPath: "issueApi",
@@ -54,6 +54,14 @@ export const issueApi = createApi({
       }),
     }),
 
+    getSingleIssue: builder.query({
+      query: (issueId) => ({
+        url: `/getIssue/${issueId}`,
+        method: "GET",
+        credentials: "include",
+      }),
+    }),
+
 
   }),
 });
@@ -64,4 +72,5 @@ export const {
   useToggleUpvoteMutation,
   useGetUserIssuesQuery,
   useUpdateIssueStatusMutation,
+  useGetSingleIssueQuery,
 } = issueApi;

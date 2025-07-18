@@ -43,7 +43,7 @@ useEffect(() => {
 
 
   return (
-    <div className="h-16 dark:bg-[#020817] bg-white border-b dark:border-b-gray-800 border-b-gray-200 fixed top-0 left-0 right-0  z-10">
+    <div className="h-16 dark:bg-[#020817] bg-cyan-100 border-b dark:border-b-gray-800 border-b-gray-200 fixed top-0 left-0 right-0  z-10">
       <div className="max-w-7xl mx-auto hidden md:flex justify-between items-center  h-full">
         <div className="flex items-center gap-8">
           <Link to="/">
@@ -71,7 +71,7 @@ useEffect(() => {
 
           {user && user.role === "admin" && (
             <Link to="/adminIssuesManager">
-              <Button variant="outline">Admin Panel</Button>
+              <Button >Admin Panel</Button>
             </Link>
           )}
         </div>

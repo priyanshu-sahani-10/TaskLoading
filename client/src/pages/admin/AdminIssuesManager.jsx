@@ -49,11 +49,11 @@ const handleStatusChange = async (issueId, newStatus) => {
             <p className="text-sm text-blue-500">Status: {issue.status}</p>
             
             {/* Status Update Dropdown */}
-            <label className="text-md font-medium mr-2">Update Status:</label>
+            <label className="text-md text-black font-medium mr-2">Update Status:</label>
             <select
               value={issue.status}
               onChange={(e) => handleStatusChange(issue._id, e.target.value)}
-              className="border px-2 py-1 rounded dark:bg-gray-700 dark:text-white"
+              className="border px-2 py-1 rounded text-gray-800 dark:bg-gray-700 dark:text-white"
             >
               {statusOptions.map((status) => (
                 <option key={status} value={status}>

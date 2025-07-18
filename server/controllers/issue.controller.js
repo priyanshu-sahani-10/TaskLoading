@@ -1,10 +1,9 @@
 import { type } from "os";
-import Issue  from "../models/issue.model.js";
+import Issue from "../models/issue.model.js";
 import cloudinary from "../utils/cloudinary.js";
 
 export const createIssue = async (req, res) => {
   try {
-
     const { title, description, category, location } = req.body;
 
     if (!title || !description || !category || !location) {
@@ -73,8 +72,6 @@ export const getAllIssue = async (req, res) => {
   }
 };
 
-
-
 //// Function to toggle upvote on an issue
 
 export const toggleUpvote = async (req, res) => {
@@ -84,7 +81,9 @@ export const toggleUpvote = async (req, res) => {
 
     const issue = await Issue.findById(issueId);
     if (!issue) {
-      return res.status(404).json({ success: false, message: "Issue not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Issue not found" });
     }
 
     const alreadyVoted = issue.upvotes.includes(userId);
@@ -102,7 +101,6 @@ export const toggleUpvote = async (req, res) => {
       message: alreadyVoted ? "Upvote removed" : "Upvoted successfully",
       totalVotes: issue.upvotes.length,
     });
-
   } catch (error) {
     console.error("Upvote failed:", error);
     return res.status(500).json({
@@ -112,15 +110,10 @@ export const toggleUpvote = async (req, res) => {
   }
 };
 
-
-
-
-
-
 export const getUserIssues = async (req, res) => {
   try {
     const userId = req.id;
-    const { status } = req.query; 
+    const { status } = req.query;
 
     const filter = { reportedBy: userId };
     if (status) filter.status = status;
@@ -135,6 +128,18 @@ export const getUserIssues = async (req, res) => {
   } catch (err) {
     console.error("User issue fetch error", err);
     res.status(500).json({ success: false, message: "Server Error" });
+  }
+};
+
+export const getSingleIssue = async (req, res) => {
+  try {
+    const issue = await Issue.findById(req.params.issueId);
+    if (!issue) {
+      return res.status(404).json({ success: false, message: "Issue not found" });
+    }
+    res.status(200).json({ success: true, data: issue }); // ✅ THIS is needed
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };
 

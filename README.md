@@ -40,22 +40,23 @@ Many cities still handle civic complaints manually through paperwork or phone ca
 ## 📂 Project Structure
 
 taskloading/
-│── server/
-│ ├── controllers/ # Issue & User controllers
-│ ├── models/ # MongoDB models (User, Issue)
-│ ├── routes/ # API routes
-│ ├── middleware/ # JWT auth, Multer config
-│ └── config/ # DB + Cloudinary setup
+├── server/
+│   ├── controllers/    # Issue & User controllers
+│   ├── models/         # MongoDB models (User, Issue)
+│   ├── routes/         # API routes
+│   ├── middleware/     # JWT auth, Multer config
+│   └── config/         # DB + Cloudinary setup
 │
-│── client/
-│ ├── src/
-│ │ ├── components/ # Reusable UI components
-│ │ ├── features/ # Redux slices
-│ │ ├── pages/ # Dashboard, Report, Auth
-│ │ └── utils/ # API helpers
+├── client/
+│   ├── src/
+│   │   ├── components/ # Reusable UI components
+│   │   ├── features/   # Redux slices
+│   │   ├── pages/      # Dashboard, Report, Auth
+│   │   └── utils/      # API helpers
 │
-│── package.json
-│── README.md
+├── package.json
+└── README.md
+
 
 ---
 

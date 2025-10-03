@@ -1,32 +1,72 @@
-🚀 TaskLoading – Civic Issue Reporting Platform
+# 🚀 TaskLoading – Civic Issue Reporting Platform
 
-TaskLoading is a full-stack MERN application that empowers citizens to report and track local civic issues (potholes, garbage dumps, water leaks, etc.) with image uploads, live location, and real-time updates.
-Built with clean architecture, role-based access control, and a modern UI, it’s an end-to-end solution for citizen engagement + admin governance.
+[![Made with MERN](https://img.shields.io/badge/Made%20with-MERN-blue)]()
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)]()
+[![Cloudinary](https://img.shields.io/badge/Image%20Storage-Cloudinary-orange)]()
+[![Redux Toolkit](https://img.shields.io/badge/State%20Management-Redux%20Toolkit-purple)]()
 
-✨ Features
+**TaskLoading** is a full-stack MERN application that empowers citizens to report local civic issues such as potholes, garbage dumps, and broken infrastructure directly from their location. Users can submit reports with images, live geolocation, or manual addresses.
 
-📍 Report Issues Easily – Submit complaints with images, live geolocation, or manual address entry.
+---
 
-🗂️ Category Classification – Road, Garbage, Water, Electricity, and more.
+## 📌 Problem Statement
 
-🔐 Secure Authentication – JWT + HTTP-only cookies with role-based access (User / Admin).
+Many cities still handle civic complaints manually through paperwork or phone calls. This leads to:
 
-🖼️ Image Uploads – Integrated Multer + Cloudinary for fast and reliable storage.
+- 🏢 Citizens facing delays in reporting issues  
+- ⏳ Slow response time due to lack of centralized tracking  
+- 📊 No real-time visibility for administrators  
 
-📊 Admin Dashboard – Verify, update, and track issue status (Pending → In Progress → Resolved).
+**Goal:** Build a platform that centralizes issue reporting, automates image & location handling, and provides real-time dashboards for users and admins.
 
-⚡ Optimized Search & Filter – Real-time search and filtering for faster issue lookup.
+---
 
-🎨 Modern UI – Built with Tailwind CSS + ShadCN UI for a clean, responsive design.
+## 🏗️ Tech Stack
 
-🌍 Geolocation Integration – Auto-detect user’s location or enter manually.
+**Frontend:**  
+- React  
+- Redux Toolkit + RTK Query  
+- Tailwind CSS + ShadCN UI  
+- Geolocation API  
 
-🔔 Notification Flow (Optional) – Users stay updated when issue status changes.
+**Backend:**  
+- Node.js + Express.js  
+- MongoDB + Mongoose  
+- JWT Authentication + HTTP-only cookies  
+- Multer (file uploads) + Cloudinary (image storage)  
 
-🛠️ Tech Stack
+---
 
-Frontend: React, Redux Toolkit, RTK Query, Tailwind CSS, ShadCN UI
-Backend: Node.js, Express.js, JWT Auth, Multer
-Database: MongoDB (Mongoose ODM)
-Cloud Storage: Cloudinary
-Others: RESTful API, Geolocation API, Protected Routes
+## 📂 Project Structure
+
+taskloading/
+│── server/
+│ ├── controllers/ # Issue & User controllers
+│ ├── models/ # MongoDB models (User, Issue)
+│ ├── routes/ # API routes
+│ ├── middleware/ # JWT auth, Multer config
+│ └── config/ # DB + Cloudinary setup
+│
+│── client/
+│ ├── src/
+│ │ ├── components/ # Reusable UI components
+│ │ ├── features/ # Redux slices
+│ │ ├── pages/ # Dashboard, Report, Auth
+│ │ └── utils/ # API helpers
+│
+│── package.json
+│── README.md
+
+---
+
+## ⚡ Key Features
+
+- 📍 Submit civic issues with **images + live location**  
+- 🗂️ Category-based classification: *Road, Garbage, Water, Electricity*  
+- 🔐 Secure JWT authentication with role-based access (User/Admin)  
+- 🖼️ Image uploads via **Multer + Cloudinary**  
+- 📊 Admin dashboard to verify and update issue statuses  
+- 🔎 Real-time search & filtering for faster issue lookup  
+- 🎨 Modern responsive UI with Tailwind CSS + ShadCN UI  
+
+---

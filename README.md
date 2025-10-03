@@ -37,8 +37,48 @@ Many cities still handle civic complaints manually through paperwork or phone ca
 
 ---
 
+# 🚀 TaskLoading – Civic Issue Reporting Platform
+
+[![Made with MERN](https://img.shields.io/badge/Made%20with-MERN-blue)]()
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)]()
+[![Cloudinary](https://img.shields.io/badge/Image%20Storage-Cloudinary-orange)]()
+[![Redux Toolkit](https://img.shields.io/badge/State%20Management-Redux%20Toolkit-purple)]()
+
+**TaskLoading** is a full-stack MERN application that allows citizens to report civic issues such as potholes, garbage dumps, water leaks, and broken infrastructure directly from their location. Reports can include images, live geolocation, or manually entered addresses.
+
+---
+
+## 📌 Problem Statement
+
+In many cities, reporting civic issues is still done manually via phone calls or paperwork. This causes:
+
+- 🏢 Citizens face delays in reporting issues  
+- ⏳ Slow response times due to lack of centralized tracking  
+- 📊 No real-time visibility for administrators  
+
+**Goal:** Build a platform that centralizes issue reporting, automates image and location handling, and provides real-time dashboards for users and admins.
+
+---
+
+## 🏗️ Tech Stack
+
+**Frontend:**  
+- React  
+- Redux Toolkit + RTK Query  
+- Tailwind CSS + ShadCN UI  
+- Geolocation API  
+
+**Backend:**  
+- Node.js + Express.js  
+- MongoDB + Mongoose  
+- JWT Authentication + HTTP-only cookies  
+- Multer (file uploads) + Cloudinary  
+
+---
+
 ## 📂 Project Structure
 
+```text
 taskloading/
 ├── server/
 │   ├── controllers/    # Issue & User controllers

@@ -20,8 +20,18 @@ const issueSchema = new mongoose.Schema(
     },
 
     location: {
-      type: String, 
-      required: true,
+      type: {
+        type: String,
+        enum: ["Point"],
+        default: "Point",
+      },
+      coordinates: {
+        type: [Number], // [longitude, latitude]
+        required: true,
+      },
+      address: {
+        type: String, // optional: store readable address
+      },
     },
 
     imageUrl: {
@@ -41,20 +51,22 @@ const issueSchema = new mongoose.Schema(
     },
 
     upvotes: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+
+    createdAt: {
+      type: Date,
+      default: Date.now,
     },
-  ],
-
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-
   },
   { timestamps: true }
 );
+
+// ✅ Add 2dsphere index for location field
+issueSchema.index({ location: "2dsphere" });
 
 const Issue = mongoose.model("Issue", issueSchema);
 export default Issue;

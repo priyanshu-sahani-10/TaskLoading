@@ -18,19 +18,18 @@ const ReportIssue = () => {
     title: "",
     description: "",
     category: "",
-    location: "", // now holds either typed or auto location
+    latitude: "",
+    longitude: "",
+    address: "",
     image: null,
   });
 
   const [
     createUserIssue,
-    {
-      data: issueData,
-      error: issueError,
-      isLoading: issueIsLoading,
-      isSuccess: issueIsSuccess,
-    },
+    { data: issueData, error: issueError, isLoading: issueIsLoading },
   ] = useCreateUserIssueMutation();
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -47,14 +46,15 @@ const ReportIssue = () => {
     }
 
     navigator.geolocation.getCurrentPosition(
-      async (position) => {
+      (position) => {
         const { latitude, longitude } = position.coords;
-
-        // Use reverse geocoding with Google Maps API (optional enhancement)
         const address = `https://www.google.com/maps?q=${latitude},${longitude}`;
+
         setFormData((prev) => ({
           ...prev,
-          location: address,
+          latitude,
+          longitude,
+          address,
         }));
       },
       (err) => {
@@ -64,28 +64,42 @@ const ReportIssue = () => {
     );
   };
 
-  const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!formData.latitude || !formData.longitude) {
+      alert("Please add location coordinates.");
+      return;
+    }
+
     const formDataToSend = new FormData();
     formDataToSend.append("title", formData.title);
     formDataToSend.append("description", formData.description);
     formDataToSend.append("category", formData.category);
-    formDataToSend.append("location", formData.location);
-    if (formData.image) {
-      formDataToSend.append("image", formData.image);
-    }
 
-      try {
-         const result = await createUserIssue(formDataToSend).unwrap();
-         if (result.success) {
-           alert("Issue reported successfully!");
-           navigate("/");
-         }        
-      } catch (error) {
-        console.error("Error creating issue:", error);
-        return;        
+    // 👇 send in GeoJSON format
+    formDataToSend.append(
+      "location",
+      JSON.stringify({
+        coordinates: [formData.longitude, formData.latitude],
+        address: formData.address,
+      })
+    );
+
+    if (formData.image) formDataToSend.append("image", formData.image);
+
+    try {
+      const result = await createUserIssue(formDataToSend).unwrap();
+      if (result.success) {
+        if(result.isDuplicate){
+          alert(`${result.message}`)
+        }
+        else alert("Issue reported successfully!");
+        navigate("/communityBoard");
       }
+    } catch (error) {
+      console.error("Error creating issue:", error);
+    }
   };
 
   return (
@@ -142,10 +156,11 @@ const ReportIssue = () => {
           </Select>
         </div>
 
-        {/* Location Field */}
-        <div className="space-y-1">
+        {/* Location Section */}
+        <div className="space-y-2">
           <Label>Location</Label>
-          <div className="flex gap-4">
+
+          <div className="flex flex-wrap gap-3">
             <Button
               type="button"
               variant="outline"
@@ -153,26 +168,41 @@ const ReportIssue = () => {
             >
               Use Current Location
             </Button>
-            <span className="text-sm self-center text-gray-500">or</span>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
             <Input
               type="text"
-              name="location"
-              placeholder="Eg. 3W2C+WR Mumbai, Maharashtra"
-              value={formData.location}
+              name="latitude"
+              placeholder="Latitude"
+              value={formData.latitude}
               onChange={handleChange}
-              className="flex-1"
+              required
+            />
+            <Input
+              type="text"
+              name="longitude"
+              placeholder="Longitude"
+              value={formData.longitude}
+              onChange={handleChange}
+              required
             />
           </div>
-          {formData.location && (
+
+          <Input
+            type="text"
+            name="address"
+            placeholder="Address or landmark (optional)"
+            value={formData.address}
+            onChange={handleChange}
+          />
+
+          {formData.latitude && formData.longitude && (
             <a
-              href={
-                formData.location.startsWith("http")
-                  ? formData.location
-                  : `https://maps.google.com/?q=${formData.location}`
-              }
+              href={`https://www.google.com/maps?q=${formData.latitude},${formData.longitude}`}
               target="_blank"
               rel="noreferrer"
-              className="text-blue-600 text-sm underline mt-1 inline-block"
+              className="text-blue-600 text-sm underline inline-block mt-1"
             >
               View on Google Maps
             </a>
@@ -191,7 +221,7 @@ const ReportIssue = () => {
         </div>
 
         <Button type="submit" className="mx-auto justify-between">
-          Submit Issue
+          {issueIsLoading ? "Submitting..." : "Submit Issue"}
         </Button>
       </form>
     </div>

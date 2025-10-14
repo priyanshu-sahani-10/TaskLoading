@@ -1,6 +1,10 @@
-import { type } from "os";
+// import { type } from "os";
 import Issue from "../models/issue.model.js";
 import cloudinary from "../utils/cloudinary.js";
+
+// import Issue from "../models/issue.model.js";
+// import cloudinary from "../utils/cloudinary.js";
+import stringSimilarity from "string-similarity";
 
 export const createIssue = async (req, res) => {
   try {
@@ -13,23 +17,84 @@ export const createIssue = async (req, res) => {
       });
     }
 
-    let Url = "";
+    let parsedLocation;
+    try {
+      parsedLocation = typeof location === "string" ? JSON.parse(location) : location;
+    } catch (err) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid location format",
+      });
+    }
 
+    if (!parsedLocation.coordinates || parsedLocation.coordinates.length !== 2) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid coordinates",
+      });
+    }
+
+    const geoLocation = {
+      type: "Point",
+      coordinates: parsedLocation.coordinates,
+      address: parsedLocation.address || "",
+    };
+
+    const RADIUS_IN_METERS = 50;
+
+    // 1️⃣ Find nearby issues in same category (within 50 meters)
+    const nearbyIssues = await Issue.find({
+      category,
+      location: {
+        $nearSphere: {
+          $geometry: geoLocation,
+          $maxDistance: RADIUS_IN_METERS,
+        },
+      },
+    });
+
+    // 2️⃣ Check fuzzy similarity for title & description
+    const SIMILARITY_THRESHOLD = 0.7; // 0.7 = 70% similarity
+
+    const duplicate = nearbyIssues.find((issue) => {
+      const titleSimilarity = stringSimilarity.compareTwoStrings(
+        title.toLowerCase(),
+        issue.title.toLowerCase()
+      );
+      const descSimilarity = stringSimilarity.compareTwoStrings(
+        description.toLowerCase(),
+        issue.description.toLowerCase()
+      );
+      return titleSimilarity > SIMILARITY_THRESHOLD || descSimilarity > SIMILARITY_THRESHOLD;
+    });
+
+    if (duplicate) {
+      return res.status(201).json({
+        success: true,
+        isDuplicate:true,
+        message:
+          "A similar issue has already been reported nearby. Please check before submitting.",
+      });
+    }
+
+    // 3️⃣ Upload image to Cloudinary if provided
+    let imageUrl = "";
     if (req.file) {
       const result = await cloudinary.uploader.upload(req.file.path, {
         resource_type: "auto",
-        folder: "issues", // optional
+        folder: "issues",
       });
-      Url = result.secure_url;
+      imageUrl = result.secure_url;
     }
 
+    // 4️⃣ Create issue
     const newIssue = await Issue.create({
       title,
       description,
       category,
-      location,
-      imageUrl: Url,
-      reportedBy: req.id, // Assuming req.id contains the user ID
+      location: geoLocation,
+      imageUrl,
+      reportedBy: req.id,
     });
 
     return res.status(201).json({
@@ -45,6 +110,11 @@ export const createIssue = async (req, res) => {
     });
   }
 };
+
+
+
+
+
 
 export const getAllIssue = async (req, res) => {
   try {

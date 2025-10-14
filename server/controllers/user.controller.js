@@ -3,6 +3,7 @@ import User from '../models/user.model.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { generateToken } from '../utils/generateToken.js';
+import Issue from '../models/issue.model.js';
 
 
 
@@ -141,3 +142,37 @@ export const logout = async (_,res) => {
         }) 
     }
 }
+
+
+
+
+export const deleteIssue = async (req, res) => {
+  try {
+    const { issueId } = req.params;
+    const issue = await Issue.findById(issueId);
+    console.log("Delete ID:", issueId);
+    console.log("Issue found:", issue);
+
+    if (!issue) {
+      return res.status(404).json({ success: false, message: "Issue not found" });
+    }
+
+    // ✅ Check ownership using either req.user.id or req.id
+    const userId = req.user?.id || req.id; 
+
+    if (issue.reportedBy.toString() !== userId) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to delete this issue",
+      });
+    }
+
+    await issue.deleteOne();
+    res.status(200).json({ success: true, message: "Issue deleted successfully" });
+  } catch (err) {
+    console.error("Delete Issue Error:", err);
+    res.status(500).json({ success: false, message: "Server error deleting issue" });
+  }
+};
+
+

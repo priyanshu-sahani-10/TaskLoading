@@ -4,6 +4,7 @@ import { createIssue, getAllIssue, getSingleIssue, getUserIssues, toggleUpvote }
 import upload from "../utils/multer.js"; 
 import isAuthenticated from "../middleware/isAuthenticated.js";
 import { AdminRoute, updateIssue } from "../controllers/admin.contoller.js";
+import { deleteIssue } from "../controllers/user.controller.js";
 
 const router = express.Router();
 
@@ -13,5 +14,5 @@ router.route("/upvoteIssue/:issueId").put(isAuthenticated,toggleUpvote); // Plac
 router.route("/my-issues").get(isAuthenticated, getUserIssues); // Assuming you want to get issues reported by the authenticated user
 router.route("/admin/updateIssues/:issueId").put(isAuthenticated,AdminRoute, updateIssue); // Placeholder for admin update functionality
 router.route("/getIssue/:issueId").get(isAuthenticated, getSingleIssue); // Placeholder for getting a single issue by ID
-
+router.route('/deleteIssue/:issueId').delete(isAuthenticated,deleteIssue);
 export default router;

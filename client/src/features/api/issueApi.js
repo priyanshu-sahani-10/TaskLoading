@@ -62,7 +62,23 @@ export const issueApi = createApi({
       }),
     }),
 
+    updateUserIssue: builder.mutation({
+      query: ({ issueId, issueData }) => ({
+        url: `updateIssue/${issueId}`,
+        method: "PUT",
+        body: issueData,
+      }),
+    }),
 
+    deleteUserIssue: builder.mutation({
+      query: (issueId) => ({
+        url: `deleteIssue/${issueId}`,
+        method: "DELETE",
+        credentials: "include", // if you use cookies/session auth
+      }),
+    }),
+
+    
   }),
 });
 
@@ -73,4 +89,6 @@ export const {
   useGetUserIssuesQuery,
   useUpdateIssueStatusMutation,
   useGetSingleIssueQuery,
+  useDeleteUserIssueMutation,
+  useUpdateUserIssueMutation,
 } = issueApi;

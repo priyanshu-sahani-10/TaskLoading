@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Trash2, Edit, MapPin, Calendar, Tag } from "lucide-react";
 import { useGetUserIssuesQuery, useDeleteUserIssueMutation } from "@/features/api/issueApi";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 const statusOptions = ["All", "Pending", "Resolved"];
 
@@ -21,24 +22,20 @@ const UserIssues = () => {
     console.log("i am in delete issue logic : upper");
     
     try {
-      console.log("i am in delete issue logic : try");
       const res = await deleteIssue(id).unwrap();
-      console.log("front end call res : ",res);
-      console.log("front end call id : ",id);
-      
       toast.success(res.message || "Issue deleted successfully!");
       refetch(); // refresh issue list
     } catch (err) {
-      console.log("i am in delete issue logic : catch");
-      console.error("Delete error:", err);
       toast.error(err?.data?.message || "Failed to delete issue");
     }
   };
 
   // ✏️ Handle update
+  const navigate = useNavigate();
   const handleUpdate = (id) => {
-    toast.info(`Update issue with ID: ${id}`);
-  };
+  navigate(`/updateIssue/${id}`);
+};
+
 
   // Filter logic
   const filteredIssues =

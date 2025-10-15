@@ -213,3 +213,77 @@ export const getSingleIssue = async (req, res) => {
   }
 };
 
+
+
+export const deleteIssue = async (req, res) => {
+  try {
+    const { issueId } = req.params;
+    const issue = await Issue.findById(issueId);
+    console.log("Delete ID:", issueId);
+    console.log("Issue found:", issue);
+
+    if (!issue) {
+      return res.status(404).json({ success: false, message: "Issue not found" });
+    }
+
+    // ✅ Check ownership using either req.user.id or req.id
+    const userId = req.user?.id || req.id; 
+
+    if (issue.reportedBy.toString() !== userId) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to delete this issue",
+      });
+    }
+
+    await issue.deleteOne();
+    res.status(200).json({ success: true, message: "Issue deleted successfully" });
+  } catch (err) {
+    console.error("Delete Issue Error:", err);
+    res.status(500).json({ success: false, message: "Server error deleting issue" });
+  }
+};
+
+
+export const updateUserIssue = async (req, res) => {
+  try {
+    const { issueId } = req.params;
+    if (!req.body) req.body = {};
+    const { title, description, category, status } = req.body;
+    let location = req.body.location;
+
+    if (location) {
+      location = typeof location === "string" ? JSON.parse(location) : location;
+    }
+
+    const issue = await Issue.findById(issueId);
+    if (!issue) {
+      return res.status(404).json({ success: false, message: "Issue not found" });
+    }
+
+    // authorization check
+    if (issue.reportedBy.toString() !== req.id.toString()) {
+      return res.status(403).json({ success: false, message: "Not authorized" });
+    }
+
+    if (title) issue.title = title;
+    if (description) issue.description = description;
+    if (category) issue.category = category;
+    if (status) issue.status = status;
+    if (location) issue.location = { type: "Point", coordinates: location.coordinates, address: location.address || "" };
+
+    // handle image
+    if (req.file) {
+      const result = await cloudinary.uploader.upload(req.file.path, { resource_type: "auto", folder: "issues" });
+      issue.imageUrl = result.secure_url;
+    }
+
+    await issue.save();
+
+    res.status(200).json({ success: true, message: "Issue updated successfully!", data: issue });
+  } catch (error) {
+    console.error("❌ Issue update failed:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+

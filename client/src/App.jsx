@@ -14,6 +14,7 @@ import CommunityBoard from "./pages/CommunityIssues.jsx";
 import UserIssues from "./pages/user/UserIssues.jsx";
 import AdminIssueManager from "./pages/admin/AdminIssuesManager.jsx";
 import SingleIssue from "./pages/SingleIssue.jsx";
+import UpdateUserIssue from "./pages/user/updateUserIssue.jsx";
 
 const appRouter = createBrowserRouter([
   {
@@ -48,14 +49,17 @@ const appRouter = createBrowserRouter([
       },
 
       {
-  path: "/communityBoard",
-  element: <CommunityBoard />,
-},
-{
-  path: "/communityBoard/getIssue/:issueId",
-  element: <SingleIssue />,
-},
-
+        path: "/communityBoard",
+        element: <CommunityBoard />,
+      },
+      {
+        path: "/communityBoard/getIssue/:issueId",
+        element: <SingleIssue />,
+      },
+      {
+        path: "/updateIssue/:issueId",
+        element: <UpdateUserIssue />,
+      },
 
       {
         path: "userIssues",

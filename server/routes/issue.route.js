@@ -1,10 +1,9 @@
 // routes/issue.route.js
 import express from "express";
-import { createIssue, getAllIssue, getSingleIssue, getUserIssues, toggleUpvote } from "../controllers/issue.controller.js";
+import { createIssue, deleteIssue, getAllIssue, getSingleIssue, getUserIssues, toggleUpvote, updateUserIssue } from "../controllers/issue.controller.js";
 import upload from "../utils/multer.js"; 
 import isAuthenticated from "../middleware/isAuthenticated.js";
-import { AdminRoute, updateIssue } from "../controllers/admin.contoller.js";
-import { deleteIssue } from "../controllers/user.controller.js";
+import { AdminRoute, updateIssue} from "../controllers/admin.contoller.js";
 
 const router = express.Router();
 
@@ -15,4 +14,5 @@ router.route("/my-issues").get(isAuthenticated, getUserIssues); // Assuming you 
 router.route("/admin/updateIssues/:issueId").put(isAuthenticated,AdminRoute, updateIssue); // Placeholder for admin update functionality
 router.route("/getIssue/:issueId").get(isAuthenticated, getSingleIssue); // Placeholder for getting a single issue by ID
 router.route('/deleteIssue/:issueId').delete(isAuthenticated,deleteIssue);
+router.route('/updateIssue/:issueId').put(isAuthenticated, upload.single("image"), updateUserIssue);
 export default router;

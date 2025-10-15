@@ -50,22 +50,15 @@ useEffect(() => {
             <h1 className=" text-blue-500 text-3xl">Taskloading</h1>
           </Link>
 
-          {user ? (
+          {user && (
             <div className="flex items-center gap-4">
               <span>Welcome, {user?.name}</span>
               <Link to="/reportIssue">
                 <Button>Report Issue</Button>
               </Link>
               <Link to="/communityBoard">
-                <Button>Show All Issues !!!</Button>
+                <Button>Show All Issues !</Button>
               </Link>
-            </div>
-          ) : (
-            <div className=" flex space-x-4">
-              <Link to="/">
-                <Button><h3 className="hidden md:block font-bold ">Home</h3></Button>
-              </Link>
-
             </div>
           )}
 

@@ -1,6 +1,17 @@
 import React, { useState, useEffect } from "react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   useGetSingleIssueQuery,
   useUpdateUserIssueMutation,
@@ -18,119 +29,193 @@ const UpdateUserIssue = () => {
     title: "",
     description: "",
     category: "",
-    location: "",
+    latitude: "",
+    longitude: "",
+    address: "",
     image: null,
   });
 
-  // ✅ Prefill form when data loads
+  // Extract issue data from API
+  const issue = data?.data;
+
   useEffect(() => {
-    if (data?.issue) {
-      const { title, description, category, location } = data.issue;
+    if (issue) {
+      const { title, description, category, location } = issue;
       setFormData({
-        title,
-        description,
-        category,
-        location,
+        title: title || "",
+        description: description || "",
+        category: category || "",
+        latitude: location?.coordinates?.[1] || "",
+        longitude: location?.coordinates?.[0] || "",
+        address: location?.address || "",
         image: null,
       });
     }
-  }, [data]);
+  }, [issue]);
 
-  // ✅ Handle text inputs
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value, files } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: files ? files[0] : value,
+    }));
   };
 
-  // ✅ Handle image input
-  const handleImageChange = (e) => {
-    setFormData({ ...formData, image: e.target.files[0] });
+  const handleUseCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      alert("Geolocation not supported");
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords;
+        const address = `https://www.google.com/maps?q=${latitude},${longitude}`;
+        setFormData((prev) => ({ ...prev, latitude, longitude, address }));
+      },
+      (err) => {
+        console.error(err);
+        alert("Failed to get location");
+      }
+    );
   };
 
-  // ✅ Handle update submit
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
       const form = new FormData();
-      for (const key in formData) {
-        if (formData[key]) form.append(key, formData[key]);
-      }
+      form.append("title", formData.title);
+      form.append("description", formData.description);
+      form.append("category", formData.category);
 
-      const res = await updateUserIssue({
-        issueId,
-        data: form,
-      }).unwrap();
+      // Location as GeoJSON
+      form.append(
+        "location",
+        JSON.stringify({
+          coordinates: [formData.longitude, formData.latitude],
+          address: formData.address,
+        })
+      );
 
-      if (res?.success) {
+      if (formData.image) form.append("image", formData.image);
+
+      const res = await updateUserIssue({ issueId, formData: form }).unwrap();
+
+      // console.log("Updated issue response:", res);
+
+      if (res.success) {
         toast.success("✅ Issue updated successfully!");
-        // Navigate back to board — will auto-refetch data
-        navigate("/communityBoard");
+        navigate("/userIssues");
       } else {
         toast.error("⚠️ Failed to update issue.");
       }
-    } catch (error) {
-      console.error("Update error:", error);
+    } catch (err) {
+      console.error("Update error:", err);
       toast.error("❌ Something went wrong while updating issue.");
     }
   };
 
   if (isLoading) return <p>Loading issue details...</p>;
   if (isError) return <p>Failed to load issue details.</p>;
+  if (!issue) return <p>Issue not found</p>;
 
   return (
-    <div className="max-w-lg mx-auto mt-8 p-6 bg-white rounded-2xl shadow">
-      <h2 className="text-2xl font-semibold mb-4 text-center">
-        ✏️ Update Your Issue
-      </h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="text"
-          name="title"
-          placeholder="Title"
-          value={formData.title}
-          onChange={handleChange}
-          className="w-full border rounded-lg p-2"
-          required
-        />
-        <textarea
-          name="description"
-          placeholder="Description"
-          value={formData.description}
-          onChange={handleChange}
-          className="w-full border rounded-lg p-2"
-          required
-        />
-        <input
-          type="text"
-          name="category"
-          placeholder="Category"
-          value={formData.category}
-          onChange={handleChange}
-          className="w-full border rounded-lg p-2"
-        />
-        <input
-          type="text"
-          name="location"
-          placeholder="Location"
-          value={formData.location}
-          onChange={handleChange}
-          className="w-full border rounded-lg p-2"
-        />
+    <div className="min-h-screen max-w-3xl mx-auto px-4 py-10">
+      <h1 className="text-3xl font-bold mb-8 text-center text-gray-950 dark:text-blue-700">
+        ✏️ Update Issue
+      </h1>
 
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleImageChange}
-          className="w-full border rounded-lg p-2"
-        />
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="space-y-1">
+          <Label>Title</Label>
+          <Input
+            type="text"
+            name="title"
+            value={formData.title}
+            onChange={handleChange}
+            required
+          />
+        </div>
 
-        <button
-          type="submit"
-          disabled={isUpdating}
-          className="w-full bg-blue-600 text-white rounded-lg py-2 font-semibold hover:bg-blue-700 disabled:opacity-50"
-        >
+        <div className="space-y-1">
+          <Label>Description</Label>
+          <Textarea
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div className="space-y-1">
+          <Label>Category</Label>
+          <Select
+            value={formData.category}
+            onValueChange={(val) =>
+              setFormData((prev) => ({ ...prev, category: val }))
+            }
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select category" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Road">Road</SelectItem>
+              <SelectItem value="Garbage">Garbage</SelectItem>
+              <SelectItem value="Streetlight">Streetlight</SelectItem>
+              <SelectItem value="Sewer">Sewer</SelectItem>
+              <SelectItem value="Building">Building</SelectItem>
+              <SelectItem value="Other">Other</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="space-y-2">
+          <Label>Location</Label>
+          <Button type="button" variant="outline" onClick={handleUseCurrentLocation}>
+            Use Current Location
+          </Button>
+          <div className="grid grid-cols-2 gap-4">
+            <Input
+              type="text"
+              name="latitude"
+              value={formData.latitude}
+              onChange={handleChange}
+              required
+            />
+            <Input
+              type="text"
+              name="longitude"
+              value={formData.longitude}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <Input
+            type="text"
+            name="address"
+            value={formData.address}
+            onChange={handleChange}
+          />
+          {formData.latitude && formData.longitude && (
+            <a
+              href={`https://www.google.com/maps?q=${formData.latitude},${formData.longitude}`}
+              target="_blank"
+              rel="noreferrer"
+              className="text-blue-600 text-sm underline inline-block mt-1"
+            >
+              View on Google Maps
+            </a>
+          )}
+        </div>
+
+        <div className="space-y-1">
+          <Label>Upload Image (optional)</Label>
+          <Input type="file" name="image" accept="image/*" onChange={handleChange} />
+        </div>
+
+        <Button type="submit" disabled={isUpdating} className="mx-auto justify-between">
           {isUpdating ? "Updating..." : "Update Issue"}
-        </button>
+        </Button>
       </form>
     </div>
   );

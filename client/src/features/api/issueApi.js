@@ -108,10 +108,10 @@ export const issueApi = createApi({
 
     // ✏️ Update user’s own issue
     updateUserIssue: builder.mutation({
-      query: ({ issueId, issueData }) => ({
+      query: ({ issueId, formData }) => ({
         url: `updateIssue/${issueId}`,
         method: "PUT",
-        body: issueData,
+        body: formData, // must be FormData
       }),
       invalidatesTags: (result, error, { issueId }) => [
         { type: "Issue", id: issueId },

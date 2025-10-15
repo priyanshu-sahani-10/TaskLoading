@@ -18,8 +18,15 @@ const Home = () => {
     } else {
       navigate("/login");
     }
-    console.log("Navigate to:", isAuthenticated ? "/reportIssue" : "/login");
   };
+
+  const handleCommunity=()=>{
+    if (isAuthenticated) {
+      navigate("/communityBoard");
+    } else {
+      navigate("/login");
+    }
+  }
 
   const features = [
     {
@@ -96,8 +103,9 @@ const Home = () => {
                 size="lg"
                 variant="outline"
                 className="text-lg px-8 py-6 border-2"
+                onClick={handleCommunity}
               >
-                Learn More
+                Issues Reported !
               </Button>
             </div>
 

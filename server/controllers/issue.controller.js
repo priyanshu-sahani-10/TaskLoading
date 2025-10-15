@@ -245,36 +245,66 @@ export const deleteIssue = async (req, res) => {
 };
 
 
-export const updateUserIssue = async (req, res) => {
-  try {
-    const { issueId } = req.params;
-    if (!req.body) req.body = {};
-    const { title, description, category, status } = req.body;
-    let location = req.body.location;
 
-    if (location) {
-      location = typeof location === "string" ? JSON.parse(location) : location;
-    }
+
+export const updateUserIssue = async (req, res) => {
+  // console.log("updateUserissue : upper");
+  try {
+    // console.log("updateUserissue : try");
+    const { issueId } = req.params;
+    console.log("issueId : " , issueId);
+    console.log("req : " , req.body);
+
+    
+    // Ensure req.body exists (needed when using multer + FormData)
+    if (!req.body) req.body = {};
 
     const issue = await Issue.findById(issueId);
-    if (!issue) {
-      return res.status(404).json({ success: false, message: "Issue not found" });
-    }
+    if (!issue) return res.status(404).json({ success: false, message: "Issue not found" });
 
-    // authorization check
-    if (issue.reportedBy.toString() !== req.id.toString()) {
+    // Authorization check
+    if (!req.id || issue.reportedBy.toString() !== req.id.toString())
       return res.status(403).json({ success: false, message: "Not authorized" });
-    }
+
+    // Destructure fields safely
+    const { title, description, category, status, location } = req.body;
+    // console.log("body of issue : ",req.body);
+    
 
     if (title) issue.title = title;
     if (description) issue.description = description;
     if (category) issue.category = category;
     if (status) issue.status = status;
-    if (location) issue.location = { type: "Point", coordinates: location.coordinates, address: location.address || "" };
 
-    // handle image
-    if (req.file) {
-      const result = await cloudinary.uploader.upload(req.file.path, { resource_type: "auto", folder: "issues" });
+    // Handle location
+    if (location) {
+      let loc = location;
+      if (typeof loc === "string") {
+        try {
+          loc = JSON.parse(loc);
+        } catch {
+          return res.status(400).json({ success: false, message: "Invalid location format" });
+        }
+      }
+
+      const lon = parseFloat(loc.coordinates?.[0]);
+      const lat = parseFloat(loc.coordinates?.[1]);
+
+      if (!isNaN(lon) && !isNaN(lat)) {
+        issue.location = {
+          type: "Point",
+          coordinates: [lon, lat],
+          address: loc.address || "",
+        };
+      }
+    }
+
+    // Handle optional image
+    if (req.file?.path) {
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: "issues",
+        resource_type: "auto",
+      });
       issue.imageUrl = result.secure_url;
     }
 
@@ -282,8 +312,12 @@ export const updateUserIssue = async (req, res) => {
 
     res.status(200).json({ success: true, message: "Issue updated successfully!", data: issue });
   } catch (error) {
+    console.log("updateUserissue : catch");
     console.error("❌ Issue update failed:", error);
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
+
+
 

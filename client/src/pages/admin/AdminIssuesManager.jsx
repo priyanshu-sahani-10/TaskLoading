@@ -8,11 +8,14 @@ import {
   FolderOpen,
   Search,
   Filter,
-  RefreshCw
+  RefreshCw,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
 import { useGetAllIssueQuery, useUpdateIssueStatusMutation } from "@/features/api/issueApi";
 
 const statusOptions = ["Pending", "In Progress", "Resolved"];
+const ITEMS_PER_PAGE = 9; // 3x3 grid - adjust as needed
 
 const AdminIssueManager = () => {
   const { data, isLoading, error, refetch } = useGetAllIssueQuery();
@@ -21,6 +24,7 @@ const AdminIssueManager = () => {
   const issues = data?.data || [];
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("All");
+  const [currentPage, setCurrentPage] = useState(1);
 
   const handleStatusChange = async (issueId, newStatus) => {
     try {
@@ -56,6 +60,28 @@ const AdminIssueManager = () => {
     const matchesFilter = filterStatus === "All" || issue.status === filterStatus;
     return matchesSearch && matchesFilter;
   });
+
+  // Pagination calculations
+  const totalPages = Math.ceil(filteredIssues.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const currentIssues = filteredIssues.slice(startIndex, endIndex);
+
+  // Reset to page 1 when filters change
+  const handleSearchChange = (value) => {
+    setSearchTerm(value);
+    setCurrentPage(1);
+  };
+
+  const handleFilterChange = (value) => {
+    setFilterStatus(value);
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const statusCounts = {
     All: issues.length,
@@ -106,7 +132,7 @@ const AdminIssueManager = () => {
                 type="text"
                 placeholder="Search issues..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => handleSearchChange(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none transition-colors"
               />
             </div>
@@ -114,7 +140,7 @@ const AdminIssueManager = () => {
               <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <select
                 value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
+                onChange={(e) => handleFilterChange(e.target.value)}
                 className="pl-10 pr-8 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none appearance-none cursor-pointer min-w-[200px]"
               >
                 <option value="All">All Status ({statusCounts.All})</option>
@@ -159,8 +185,15 @@ const AdminIssueManager = () => {
           </div>
         </div>
 
+        {/* Results Summary */}
+        {filteredIssues.length > 0 && (
+          <div className="mb-4 text-sm text-gray-600 dark:text-gray-400">
+            Showing {startIndex + 1}-{Math.min(endIndex, filteredIssues.length)} of {filteredIssues.length} issues
+          </div>
+        )}
+
         {/* Issues Grid */}
-        {filteredIssues.length === 0 ? (
+        {currentIssues.length === 0 ? (
           <div className="text-center py-12">
             <div className="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
               <Search className="w-10 h-10 text-gray-400" />
@@ -169,8 +202,8 @@ const AdminIssueManager = () => {
             <p className="text-gray-500 dark:text-gray-400">Try adjusting your search or filter criteria</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredIssues.map((issue) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            {currentIssues.map((issue) => (
               <div key={issue._id} className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden group">
                 
                 {issue.imageUrl && (
@@ -218,6 +251,67 @@ const AdminIssueManager = () => {
                 </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-2 pb-8">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="p-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+            >
+              <ChevronLeft className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+            </button>
+
+            {/* Page Numbers */}
+            <div className="flex gap-2">
+              {[...Array(totalPages)].map((_, index) => {
+                const page = index + 1;
+                // Show first page, last page, current page, and pages around current
+                if (
+                  page === 1 ||
+                  page === totalPages ||
+                  (page >= currentPage - 1 && page <= currentPage + 1)
+                ) {
+                  return (
+                    <button
+                      key={page}
+                      onClick={() => handlePageChange(page)}
+                      className={`w-10 h-10 rounded-lg font-medium transition-all ${
+                        currentPage === page
+                          ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md"
+                          : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  );
+                } else if (
+                  page === currentPage - 2 ||
+                  page === currentPage + 2
+                ) {
+                  return (
+                    <span
+                      key={page}
+                      className="w-10 h-10 flex items-center justify-center text-gray-500 dark:text-gray-400"
+                    >
+                      ...
+                    </span>
+                  );
+                }
+                return null;
+              })}
+            </div>
+
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="p-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+            >
+              <ChevronRight className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+            </button>
           </div>
         )}
       </div>

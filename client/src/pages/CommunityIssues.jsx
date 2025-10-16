@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { ArrowUp, Calendar, Tag, MapPin } from "lucide-react";
+import { ArrowUp, Calendar, Tag, MapPin, AlertCircle, Clock, CheckCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import {
   useGetAllIssueQuery,
   useToggleUpvoteMutation,
@@ -17,8 +17,29 @@ const categories = [
   "Other",
 ];
 
+const ITEMS_PER_PAGE = 9; // 3x3 grid - adjust as needed
+
+const getStatusIcon = (status) => {
+  switch (status) {
+    case "Pending": return <AlertCircle className="w-5 h-5" />;
+    case "In Progress": return <Clock className="w-5 h-5" />;
+    case "Resolved": return <CheckCircle className="w-5 h-5" />;
+    default: return null;
+  }
+};
+
+const getStatusColor = (status) => {
+  switch (status) {
+    case "Pending": return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300 border-yellow-300 dark:border-yellow-700";
+    case "In Progress": return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 border-blue-300 dark:border-blue-700";
+    case "Resolved": return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 border-green-300 dark:border-green-700";
+    default: return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300";
+  }
+};
+
 const CommunityBoard = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [currentPage, setCurrentPage] = useState(1);
   const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
 
@@ -35,6 +56,23 @@ const CommunityBoard = () => {
   const sortedIssues = [...filteredIssues].sort(
     (a, b) => (b.upvotes?.length || 0) - (a.upvotes?.length || 0)
   );
+
+  // Pagination calculations
+  const totalPages = Math.ceil(sortedIssues.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const currentIssues = sortedIssues.slice(startIndex, endIndex);
+
+  // Reset to page 1 when category changes
+  const handleCategoryChange = (cat) => {
+    setSelectedCategory(cat);
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const handleUpvote = async (id) => {
     try {
@@ -81,7 +119,7 @@ const CommunityBoard = () => {
             {categories.map((cat) => (
               <button
                 key={cat}
-                onClick={() => setSelectedCategory(cat)}
+                onClick={() => handleCategoryChange(cat)}
                 className={`px-6 py-2 rounded-lg font-medium transition-all duration-200 ${
                   selectedCategory === cat
                     ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md transform scale-105"
@@ -94,9 +132,16 @@ const CommunityBoard = () => {
           </div>
         </div>
 
+        {/* Results Summary */}
+        {sortedIssues.length > 0 && (
+          <div className="mb-4 text-sm text-gray-600 dark:text-gray-400">
+            Showing {startIndex + 1}-{Math.min(endIndex, sortedIssues.length)} of {sortedIssues.length} issues
+          </div>
+        )}
+
         {/* Issues Grid */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {sortedIssues.length === 0 ? (
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
+          {currentIssues.length === 0 ? (
             <div className="col-span-full text-center py-12 bg-white dark:bg-gray-800 rounded-xl shadow-sm transition-colors duration-300">
               <div className="max-w-md mx-auto">
                 <div className="w-20 h-20 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -112,14 +157,14 @@ const CommunityBoard = () => {
               </div>
             </div>
           ) : (
-            sortedIssues.map((issue) => {
+            currentIssues.map((issue) => {
               const hasUpvoted = issue.upvotes.includes(user?._id);
               const upvoteCount = issue.upvotes.length;
 
               return (
                 <div
                   key={issue._id}
-                  onClick={() => navigate(`/communityBoard/getIssue/${issue._id}`)} // ✅ navigate to single issue
+                  onClick={() => navigate(`/communityBoard/getIssue/${issue._id}`)}
                   className="cursor-pointer bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden group border border-transparent dark:border-gray-700"
                 >
                   {/* Image */}
@@ -130,14 +175,9 @@ const CommunityBoard = () => {
                         alt={issue.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
-                      <div
-                        className={`absolute top-3 right-3 px-3 py-1 rounded-full text-sm font-semibold ${
-                          issue.status === "Resolved"
-                            ? "bg-green-500 text-white"
-                            : "bg-yellow-500 text-white"
-                        }`}
-                      >
-                        {issue.status}
+                      <div className={`absolute top-3 right-3 flex items-center gap-1 px-3 py-1.5 rounded-full border-2 ${getStatusColor(issue.status)} backdrop-blur-sm`}>
+                        {getStatusIcon(issue.status)}
+                        <span className="text-xs font-bold">{issue.status}</span>
                       </div>
                     </div>
                   )}
@@ -174,7 +214,7 @@ const CommunityBoard = () => {
                             target="_blank"
                             rel="noreferrer"
                             className="hover:underline"
-                            onClick={(e) => e.stopPropagation()} // ✅ prevent navigate on map click
+                            onClick={(e) => e.stopPropagation()}
                           >
                             View on Map
                           </a>
@@ -199,7 +239,7 @@ const CommunityBoard = () => {
                       </div>
                       <button
                         onClick={(e) => {
-                          e.stopPropagation(); // ✅ prevent navigation
+                          e.stopPropagation();
                           handleUpvote(issue._id);
                         }}
                         disabled={isVoting}
@@ -219,6 +259,67 @@ const CommunityBoard = () => {
             })
           )}
         </div>
+
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-2 pb-8">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="p-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+            >
+              <ChevronLeft className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+            </button>
+
+            {/* Page Numbers */}
+            <div className="flex gap-2">
+              {[...Array(totalPages)].map((_, index) => {
+                const page = index + 1;
+                // Show first page, last page, current page, and pages around current
+                if (
+                  page === 1 ||
+                  page === totalPages ||
+                  (page >= currentPage - 1 && page <= currentPage + 1)
+                ) {
+                  return (
+                    <button
+                      key={page}
+                      onClick={() => handlePageChange(page)}
+                      className={`w-10 h-10 rounded-lg font-medium transition-all ${
+                        currentPage === page
+                          ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md"
+                          : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  );
+                } else if (
+                  page === currentPage - 2 ||
+                  page === currentPage + 2
+                ) {
+                  return (
+                    <span
+                      key={page}
+                      className="w-10 h-10 flex items-center justify-center text-gray-500 dark:text-gray-400"
+                    >
+                      ...
+                    </span>
+                  );
+                }
+                return null;
+              })}
+            </div>
+
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="p-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+            >
+              <ChevronRight className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

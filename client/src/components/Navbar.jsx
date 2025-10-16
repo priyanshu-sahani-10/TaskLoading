@@ -162,7 +162,7 @@ export default function Navbar() {
                   <Link to="/login">
                     <Button variant="ghost">Login</Button>
                   </Link>
-                  <Link to="/signup">
+                  <Link to="/login">
                     <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
                       Sign Up
                     </Button>
@@ -278,7 +278,7 @@ export default function Navbar() {
                     Login
                   </Button>
                 </Link>
-                <Link to="/signup" onClick={() => setMobileMenuOpen(false)}>
+                <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
                   <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600">
                     Sign Up
                   </Button>
